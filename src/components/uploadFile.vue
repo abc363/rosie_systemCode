@@ -1,0 +1,134 @@
+<template>
+<div class="uploadFile-wrap">
+    <el-upload
+        class="upload-demo"
+        :action="url"
+        :limit="1"
+        :on-error="onError"
+        :on-preview="onPreview"
+        :before-remove="beforeRemove"
+        :before-upload="beforeUpload"
+        :on-success="handleSuccess"
+        :on-exceed="onExceed"
+        :list-type="isPicture"
+        :on-remove="handleRemove"
+        :file-list="fileList">
+        <div class="upload-wrap"><i class="el-icon-folder-add" style="margin:0 5px"></i>点击上传</div>
+    </el-upload>
+   
+</div>
+</template>
+<script>
+export default {
+    props:{
+        fileName:{
+            type:String,
+            default:'',
+        },
+        imageUrl:{
+            type:String,
+            default:'',
+        },
+        isPicture:{
+            type:String,
+            default:'picture',
+        },
+        field:{
+            type:String,
+            default:'',
+        },
+        pid:{
+            type:Number,
+        },
+        visiable:{
+            type:Boolean,
+            default:false,
+        }
+    },
+    data(){
+        return{
+            fileList:[],
+            uploadUrl:'',
+            baseUrl:"http://120.55.95.122:8080/",
+            url:"http://120.55.95.122:8080/products/uploadFile",
+            delForm:{
+                filePath:'',
+                pid:this.pid,
+                fileName:this.field,
+            }
+        }
+    },
+    watch:{
+        visiable:{
+            immediate:true,
+            handler:function(newVal){
+                 this.fileList = [];
+                if(this.imageUrl){
+                    const str = this.imageUrl.substring(this.imageUrl.lastIndexOf("/")+1);
+                    this.fileList.push({
+                        name:str,
+                        url:this.imageUrl
+                    })
+                }
+            }           
+        }
+    },
+    methods:{
+        handleSuccess(response, file, fileList){
+            const path = response.data.path;
+            this.delForm.filePath = path.split(this.$domain)[1];
+            this.uploadUrl = path;
+            this.$emit('handleUrl',path,this.field,file.name);
+        },
+        onExceed(){
+            this.$error("抱歉，最多只能上传一个文件");
+        },
+        onError(){
+            this.$error("上传失败");
+        },
+        beforeUpload(file,fileList){
+            const isLt2M = file.size / 1024 / 1024 > 200;
+            if(isLt2M){
+                this.$error("上传文件大小不能超过200MB！");
+            }
+            return isLt2M;
+        },
+         beforeRemove(file, fileList) {
+            return this.$confirm(`请问您确定移除 ${ file.name }？`);
+        },
+        handleRemove(){
+             this.post('/products/deleteFile',this.delForm).then(res=>{
+                    this.$success('删除成功！');
+                }).catch(e=>{
+                    this.$error(`删除失败！${e}`);
+                })
+        },
+        onPreview(){
+            window.open(this.uploadUrl);
+        }
+    }
+}
+</script>
+<style lang="less">
+.uploadFile-wrap{
+    .upload-demo{
+        .el-upload{
+            display: block !important;
+        }
+        .upload-wrap{
+            height: 40px;
+            line-height: 40px;
+            border: 1px solid #DCDFE6;
+            border-radius: 2px;
+            // width: 200px;
+        }
+    }
+    .file-wrap{
+        border-bottom: 1px solid #DCDFE6;
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+
+</style>
