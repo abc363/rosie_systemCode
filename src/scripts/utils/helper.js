@@ -2,7 +2,7 @@ import axios from 'axios';
 // 设置请求超时时间和域名  创建axios实例
 const instance = axios.create({
   baseURL: 'http://120.55.95.122:8080/',
-  timeout: 5000
+  timeout: 15000
 })
 
 //  http request 拦截器

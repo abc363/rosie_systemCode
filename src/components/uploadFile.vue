@@ -6,6 +6,7 @@
         :limit="1"
         :on-error="onError"
         :on-preview="onPreview"
+        :on-progress="onProgress"
         :before-remove="beforeRemove"
         :before-upload="beforeUpload"
         :on-success="handleSuccess"
@@ -55,7 +56,9 @@ export default {
                 filePath:'',
                 pid:this.pid,
                 fileName:this.field,
-            }
+            },
+            isLt2M:false,
+            signature:"http://qiufengfu363.oss-cn-hangzhou.aliyuncs.com/",
         }
     },
     watch:{
@@ -68,17 +71,23 @@ export default {
                     this.fileList.push({
                         name:str,
                         url:this.imageUrl
-                    })
+                    });
+                    this.delForm.filePath = this.imageUrl.split(this.signature)[1];
                 }
             }           
         }
     },
     methods:{
+        onProgress(event, file, fileList){
+            startLoading();
+        },
         handleSuccess(response, file, fileList){
+            endLoading();
             const path = response.data.path;
             this.delForm.filePath = path.split(this.$domain)[1];
             this.uploadUrl = path;
             this.$emit('handleUrl',path,this.field,file.name);
+            this.$success("上传成功!");
         },
         onExceed(){
             this.$error("抱歉，最多只能上传一个文件");
@@ -87,19 +96,22 @@ export default {
             this.$error("上传失败");
         },
         beforeUpload(file,fileList){
-            const isLt2M = file.size / 1024 / 1024 > 200;
-            if(isLt2M){
-                this.$error("上传文件大小不能超过200MB！");
+            this.isLt2M = file.size / 1024 / 1024 > 200;
+            if(this.isLt2M){
+                this.$error("上传文件大小不能超过200MB！请点击确认删除！");
             }
-            return isLt2M;
+            return !this.isLt2M;
         },
-         beforeRemove(file, fileList) {
+        beforeRemove(file, fileList) {
             return this.$confirm(`请问您确定移除 ${ file.name }？`);
         },
         handleRemove(){
+            startLoading();
              this.post('/products/deleteFile',this.delForm).then(res=>{
+                    endLoading();
                     this.$success('删除成功！');
                 }).catch(e=>{
+                    endLoading();
                     this.$error(`删除失败！${e}`);
                 })
         },
