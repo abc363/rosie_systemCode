@@ -7,7 +7,7 @@
               <div class="isClossTab">
                 <i :class="isCollapse?'el-icon-d-arrow-right':'el-icon-d-arrow-left'" ></i>
               </div>
-              <h3>WindTech</h3>
+              <h3>WindIIOT</h3>
             </div>
             <div>
               <strong style="margin:0 10px;cursor:pointer" @click="addMenuItem('0')">个人中心</strong>
@@ -62,7 +62,7 @@
               </el-tab-pane>
             </el-tabs>
             </el-main>
-            <el-footer class="main-footer" height="35px">© WindTechInventory.com - 后台管理系统</el-footer>
+            <el-footer class="main-footer" height="35px">© WindIIOTInventory.com - 后台管理系统</el-footer>
           </el-container>
         </el-container>
         
@@ -146,12 +146,17 @@ export default {
          })
         },
         outIndex(){
-           this.$confirm('请问您确定要退出登录吗？', '提示', {
+           this.$confirm('请问您是否要退出登录吗？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            location.href="./login";
+            this.post(`/users/logout`).then(res=>{
+              location.href="./index.html";
+              window.sessionStorage.clear();
+            }).catch(e=>{
+              this.$error('退出失败，请重新尝试');
+            })
           })
         },
         removeTab(targetName) {

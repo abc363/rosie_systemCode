@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { TimeSelect } from 'element-ui';
 // 设置请求超时时间和域名  创建axios实例
 const instance = axios.create({
   baseURL: 'http://120.55.95.122:8080/',
@@ -88,7 +89,11 @@ instance.interceptors.response.use(response => {
     instance.get(url, {
       params: params
     }).then(response => {
+      if(response.data.state === 200){
         resolve(response.data.data)
+      }else{
+       this.$error(response.data.message);
+      }
       }).catch(err => {
         reject(err)
       })
@@ -102,6 +107,8 @@ export function post(url, data = {}) {
       .then(response => {
           if(response.data.state === 200){
             resolve(response.data)
+          }else{
+           this.$error(response.data.message);
           }
       }, err => {
         reject(err)
