@@ -58,6 +58,7 @@ export default {
                 fileName:this.field,
             },
             isLt2M:false,
+            loading:'',
             signature:"http://qiufengfu363.oss-cn-hangzhou.aliyuncs.com/",
         }
     },
@@ -79,10 +80,15 @@ export default {
     },
     methods:{
         onProgress(event, file, fileList){
-            startLoading();
+            this.loading = this.$loading({
+                lock: true,
+                text: '拼命加载中...',//可以自定义文字
+                spinner:'el-icon-loading',//自定义加载图标类名
+                background: 'rgba(0, 0, 0, 0.7)'//遮罩层背景色
+            });
         },
         handleSuccess(response, file, fileList){
-            endLoading();
+            this.loading.close();
             const path = response.data.path;
             this.delForm.filePath = path.split(this.$domain)[1];
             this.uploadUrl = path;
@@ -106,12 +112,9 @@ export default {
             return this.$confirm(`请问您确定移除 ${ file.name }？`);
         },
         handleRemove(){
-            startLoading();
              this.post('/products/deleteFile',this.delForm).then(res=>{
-                    endLoading();
                     this.$success('删除成功！');
                 }).catch(e=>{
-                    endLoading();
                     this.$error(`删除失败！${e}`);
                 })
         },

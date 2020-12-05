@@ -73,6 +73,12 @@ instance.interceptors.response.use(response => {
         this.$error('http版本不支持该请求')
         console.log('http版本不支持该请求')
         break
+      case 518:
+        this.$error('因为您长时间没有操作，您的登录信息已过期，请重新登录')
+        console.log('因为您长时间没有操作，您的登录信息已过期，请重新登录')
+        window.sessionStorage.clear();
+        location.href="./index.html";
+        break
       default:
         this.$error(`连接错误${err.response.status}`)
         console.log(`连接错误${err.response.status}`)

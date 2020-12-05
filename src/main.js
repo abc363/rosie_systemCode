@@ -28,18 +28,6 @@ axios.defaults.crossDomain = true;
 // 请求超时时间
 axios.defaults.timeout = 100000; 
 // 将axios库挂载到Vue的原型，使vue的每一个组件都能通过$http进行访问从而发起请求
-export const startLoading = () => {
-  loading = Loading.service({
-    lock: true,
-    text: '拼命加载中...',//可以自定义文字
-    spinner:'el-icon-loading',//自定义加载图标类名
-    background: 'rgba(0, 0, 0, 0.7)'//遮罩层背景色
-  });
-};
- 
-export const endLoading = () => {
-  loading.close();
-}
 
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
