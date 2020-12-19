@@ -50,8 +50,8 @@ export default {
         return{
             fileList:[],
             uploadUrl:'',
-            baseUrl:"http://120.55.95.122:8080/",
-            url:"http://120.55.95.122:8080/products/uploadFile",
+            baseUrl:"http://www.windiiot.com/",
+            url:"http://www.windiiot.com/products/uploadFile",
             delForm:{
                 filePath:'',
                 pid:this.pid,
@@ -59,7 +59,7 @@ export default {
             },
             isLt2M:false,
             loading:'',
-            signature:"http://qiufengfu363.oss-cn-hangzhou.aliyuncs.com/",
+            signature:"http://windiiot.oss-cn-beijing.aliyuncs.com/",
         }
     },
     watch:{
