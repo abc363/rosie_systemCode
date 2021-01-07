@@ -154,6 +154,8 @@ export default {
           pro_fontTiltOne:'',
           pro_file:'',
           pro_fileName:'',
+          pro_manualName:'',
+          pro_manual:'',
           pro_info:'',
           pro_finger:'',
           pro_driver:'',

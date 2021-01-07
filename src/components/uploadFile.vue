@@ -50,8 +50,8 @@ export default {
         return{
             fileList:[],
             uploadUrl:'',
-            baseUrl:"http://www.windiiot.com/",
-            url:"http://www.windiiot.com/products/uploadFile",
+            baseUrl:"http://backend.windiiot.com/",
+            url:"http://backend.windiiot.com/products/uploadFile",
             delForm:{
                 filePath:'',
                 pid:this.pid,

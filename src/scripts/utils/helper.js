@@ -2,7 +2,7 @@ import axios from 'axios';
 import { TimeSelect } from 'element-ui';
 // 设置请求超时时间和域名  创建axios实例
 const instance = axios.create({
-  baseURL: 'http://www.windiiot.com/',
+  baseURL: 'http://backend.windiiot.com/',
   timeout: 15000
 })
 
@@ -11,7 +11,11 @@ instance.interceptors.request.use(
   config => {
     config.headers = {
       // 'Content-Type': 'application/x-www-form-urlencoded'
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'xhrFields':{
+        'withCredentials':true,
+      }
+  
     }
     return config
   }, err => {

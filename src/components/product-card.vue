@@ -45,6 +45,12 @@
                     </el-form-item>
                 </el-col>
                  <el-col :span="23">
+                    <el-form-item label="use manual" label-width="110px">
+                        <UploadFile :fileName="form.pro_manualName" @handleUrl="handleUrl" :imageUrl="form.pro_manual"
+                         isPicture="text" field="pro_manual" :pid="num" :visiable="isVisible"></UploadFile>
+                    </el-form-item>
+                </el-col>
+                 <el-col :span="23">
                     <el-form-item label="上位机配置工具" label-width="110px">
                         <UploadFile :fileName="form.pro_driverName" @handleUrl="handleUrl" :imageUrl="form.pro_driver"
                           isPicture="text" field="pro_driver" :pid="num" :visiable="isVisible"></UploadFile>
