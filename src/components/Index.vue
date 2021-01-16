@@ -45,7 +45,7 @@
                 <el-menu-item index="3">
                    <template slot="title">
                     <i class="el-icon-money" ></i>
-                    <span slot="title">收益情况</span>
+                    <span slot="title">新闻管理</span>
                    </template>
                 </el-menu-item>
               </el-menu>
@@ -75,14 +75,14 @@
 import Product from './Product';
 import Home from './home';
 import Sale from './sale';
-import Benifit from './benifit';
+import News from './news';
 import Personal from './personal';
 export default {
     components: {
       Product,
       Home,
       Sale,
-      Benifit,
+      News,
       Personal,
     },
     data() {
@@ -109,8 +109,8 @@ export default {
           },
           {
             value: '3',
-            label:'收益情况',
-            component:'Benifit',
+            label:'新闻管理',
+            component:'News',
           },
         ];
         return {

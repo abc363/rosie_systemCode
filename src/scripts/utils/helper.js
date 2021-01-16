@@ -2,7 +2,8 @@ import axios from 'axios';
 import { TimeSelect } from 'element-ui';
 // 设置请求超时时间和域名  创建axios实例
 const instance = axios.create({
-  baseURL: 'http://backend.windiiot.com/',
+  // baseURL: 'http://backend.windiiot.com/',
+  baseURL: 'http://120.55.95.122:8080/',
   timeout: 15000
 })
 
