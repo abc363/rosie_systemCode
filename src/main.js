@@ -21,7 +21,8 @@ Vue.prototype.$success = function (msg) {
 }
 Vue.prototype.$domain = "http://windiiot.oss-cn-beijing.aliyuncs.com/";
 // 配置请求的根路径
-axios.defaults.baseURL = 'http://backend.windiiot.com/'
+// axios.defaults.baseURL = 'http://backend.windiiot.com/'
+axios.defaults.baseURL = 'http://120.55.95.122:8080/'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 axios.defaults.withCredentials = true;
 axios.defaults.crossDomain = true;

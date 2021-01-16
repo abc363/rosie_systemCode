@@ -3,14 +3,14 @@
     <el-container>
       <el-header class="login-header">
         <div style="width:240px">
-          <img src="../img/logo.jpg"/><div class="title-wrap">微风科技</div><div class="url-wrap">- modeth.com -</div>
+          <img src="../img/logo.jpg"/><div class="title-wrap">微风科技</div><div class="url-wrap">- windiiot.com -</div>
         </div>
       </el-header>
       <el-main class="login-body">
         <div class="body-wrap"></div>
           <div class="body-front-wrap">
               <div class="font-wrap">
-                <p class="animate" data-ani="bounceInLeft">微风科技后台管理系统 - modeth.com -</p><p class="animate" data-ani="bounceInRight">让科技，改变生活。</p>
+                <p class="animate" data-ani="bounceInLeft">微风科技后台管理系统 - windiiot.com -</p><p class="animate" data-ani="bounceInRight">让科技，改变生活。</p>
               </div>
               <div class="login-wrap">
                 <div class="login-body-wrap">
@@ -39,7 +39,7 @@
               </div>
             </div>
       </el-main>
-      <el-footer class="login-footer">Copyright 2019-2020 modeth.com 版权所有 佛山市微风科技有限公司</el-footer>
+      <el-footer class="login-footer">Copyright 2019-2020 windiiot.com 版权所有 佛山市微风科技有限公司</el-footer>
     </el-container>
   </div>
 </template>
