@@ -2,8 +2,9 @@
 <div class="uploadFile-wrap">
     <el-upload
         class="upload-demo"
+        ref="uploadAdd"
         :action="url"
-        :limit="1"
+        :limit="limit"
         :on-error="onError"
         :on-preview="onPreview"
         :on-progress="onProgress"
@@ -44,6 +45,14 @@ export default {
         visiable:{
             type:Boolean,
             default:false,
+        },
+        isNewContentUpload:{
+            type:Boolean,
+            default:false,
+        },
+        limit:{
+           type:Number,
+           default:1,
         }
     },
     data(){
@@ -96,6 +105,9 @@ export default {
             this.uploadUrl = path;
             this.$emit('handleUrl',path,this.field,file.name);
             this.$success("上传成功!");
+            if(this.isNewContentUpload){
+              this.$emit('insertQuillImage',path);
+            }
         },
         onExceed(){
             this.$error("抱歉，最多只能上传一个文件");

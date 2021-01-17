@@ -40,11 +40,13 @@
                     </el-form-item>
                 </el-col>
                  <el-col :span="23">
-                    <el-form-item label="新闻内容" label-width="40px">
+                    <el-form-item label="内容" label-width="40px">
+                       <UploadFile class="news-upload" :isNewContentUpload="true" 
+                       @insertQuillImage="insertQuillImage" :limit="100"></UploadFile>
                          <quill-editor
                             v-model="form.new_content"
                             :options="editorOption" 
-                            ref="myQuillEditor" style="height:630px" >
+                            ref="myQuillEditor" style="height:650px" >
                         </quill-editor>
                     </el-form-item>
                 </el-col>
@@ -58,10 +60,32 @@
     </div>
 </template>
 <script>
+import Vue from 'vue';
 import UploadFile from './uploadFile';
+import VueQuillEditor from 'vue-quill-editor';
+Vue.use(VueQuillEditor);
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
+const toolbarOptions = [
+      ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+      ['blockquote', 'code-block'],
+    
+      [{'header': 1}, {'header': 2}],               // custom button values
+      [{'list': 'ordered'}, {'list': 'bullet'}],
+      [{'script': 'sub'}, {'script': 'super'}],      // superscript/subscript
+      [{'indent': '-1'}, {'indent': '+1'}],          // outdent/indent
+      [{'direction': 'rtl'}],                         // text direction
+    
+      [{'size': ['small', false, 'large', 'huge']}],  // custom dropdown
+      [{'header': [1, 2, 3, 4, 5, 6, false]}],
+    
+      [{'color': []}, {'background': []}],          // dropdown with defaults from theme
+      [{'font': []}],
+      [{'align': []}],
+      ['link', 'image', 'video'],
+      ['clean']                                         // remove formatting button
+    ]
 export default {
     components: {
       UploadFile,
@@ -71,7 +95,7 @@ export default {
             type:Boolean,
             default:false,
         },
-        proName:{
+        newsName:{
             type:String,
             default:'',
         },
@@ -79,7 +103,7 @@ export default {
             type:Number,
             default:0,
         },
-        proForm:{
+        newsForm:{
             type:Object,
             default(){
                 return {};
@@ -97,12 +121,27 @@ export default {
             form:{},
             editorOption: {
                 placeholder: '请输入新闻内容.....',
+                modules: {
+                toolbar: {
+                    container: toolbarOptions,  // 工具栏
+                    handlers: {
+                      // 监听图片上传功能
+                        'image': function (value) {
+                            if (value) {
+                                document.querySelector('.news-upload .el-upload__input').click()
+                            } else {
+                                this.quill.format('image', false);
+                            }
+                        }
+                    }
+                }
+            }
             },
         }
     },
     computed:{
         titleName(){
-            return this.proName === ''? '添加新闻':`${this.proName}新闻修改信息`;
+            return this.newsName === ''? '添加新闻':`${this.newsName}新闻修改信息`;
         }
     },
     watch:{
@@ -113,16 +152,22 @@ export default {
             newVal === false && (this.form = {});
             this.$emit('changeVisiable',newVal);
         },
-        proForm(newVal){
+        newsForm(newVal){
             this.form = newVal;
         }
     },
     mounted(){
-        this.form = this.proForm;
+        this.form = this.newsForm;
     },
     methods:{
-        onSure(bol,pid){
-            const url = bol ? `/news/add` : `/news/${pid}/change_info`;
+        onSure(bol,nid){
+           this.loading = this.$loading({
+                lock: true,
+                text: '拼命加载中...',//可以自定义文字
+                spinner:'el-icon-loading',//自定义加载图标类名
+                background: 'rgba(0, 0, 0, 0.7)'//遮罩层背景色
+            });
+            const url = bol ? `/news/add` : `/news/${nid}/change_info`;
             const text = bol ? '添加' : '修改';
             this.post(url,this.form).then(res => {
                this.$success(`${text}成功`);
@@ -133,11 +178,26 @@ export default {
                   return this.$error(`请求失败！${res.$message}`);
             }).finally(e=>{
                 this.isVisible = false;
-                this.$emit('showProduct');
+                this.$emit('showNews');
+                this.loading.close();
             })
         },
         handleUrl(url,name,fileName){
             this.form[name] = url;
+        },
+        insertQuillImage(path){
+              console.log(this.$refs);
+              console.log(this.$refs.myQuillEditor);
+              let quill = this.$refs.myQuillEditor.quill
+              // // 如果上传成功
+                // 获取光标所在位置
+                let length = quill.getSelection().index
+                // 插入图片  dt.url为服务器返回的图片地址
+                quill.insertEmbed(length, 'image', path)
+                // 调整光标到最后
+                quill.setSelection(length + 1)
+              // loading加载隐藏
+              // this.quillUpdateImg = false
         }
     }
 }
@@ -150,5 +210,20 @@ export default {
     .el-textarea__inner{
         height: 100px;
     }
+    .quill-editor{
+      display: inline-block;
+    }
+    .el-date-editor{
+      width: 100%;
+    }
+    .ivu-upload {
+      display: none;
+    }
+    .news-upload{
+      display: none;
+    }
+    //  .news-upload .upload-wrap .el-upload-list{
+    //   display: none;
+    // }
 }
 </style>
