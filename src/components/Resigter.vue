@@ -2,7 +2,7 @@
 <div class="resigter-wrap">
   <el-header class="login-header">
         <div style="width:240px">
-          <img src="../img/logo.jpg"/><div class="title-wrap">微风科技</div><div class="url-wrap">- windiiot.com -</div>
+          <img src="../img/logo.jpg"/><div class="title-wrap">VKnow新闻</div><div class="url-wrap">- vknow.com -</div>
         </div>
       </el-header>
   <div class="resigter-container">

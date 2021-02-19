@@ -7,7 +7,7 @@
               <div class="isClossTab">
                 <i :class="isCollapse?'el-icon-d-arrow-right':'el-icon-d-arrow-left'" ></i>
               </div>
-              <h3>WindIIOT</h3>
+              <h3>VKnow</h3>
             </div>
             <div>
               <strong style="margin:0 10px;cursor:pointer" @click="addMenuItem('0')">个人中心</strong>
@@ -29,23 +29,29 @@
                 <el-menu-item index="1">
                    <template slot="title">
                     <i class="el-icon-s-home"></i>
-                    <span slot="title">主页</span>
+                    <span slot="title">导流管理</span>
                   </template>
                 </el-menu-item>
                 <el-submenu index="2">
                   <template slot="title">
                     <i class="el-icon-menu"></i>
-                    <span slot="title">产品情况</span>
+                    <span slot="title">冷启动管理</span>
                   </template>
                   <el-menu-item-group>
-                    <el-menu-item index="2-1">产品管理</el-menu-item>
-                    <el-menu-item index="2-2">销售情况</el-menu-item>
+                    <el-menu-item index="2-1">冷启内容管理</el-menu-item>
+                    <el-menu-item index="2-2">冷启账号管理</el-menu-item>
                   </el-menu-item-group>
                 </el-submenu>
                 <el-menu-item index="3">
                    <template slot="title">
                     <i class="el-icon-money" ></i>
-                    <span slot="title">新闻管理</span>
+                    <span slot="title">内容发布审核管理</span>
+                   </template>
+                </el-menu-item>
+                <el-menu-item index="4">
+                   <template slot="title">
+                    <i class="el-icon-money" ></i>
+                    <span slot="title">奖励模块设置</span>
                    </template>
                 </el-menu-item>
               </el-menu>
@@ -62,7 +68,7 @@
               </el-tab-pane>
             </el-tabs>
             </el-main>
-            <el-footer class="main-footer" height="35px">© WindIIOTInventory.com - 后台管理系统</el-footer>
+            <el-footer class="main-footer" height="35px">© VKnowInventory.com - 后台管理系统</el-footer>
           </el-container>
         </el-container>
         
@@ -73,16 +79,20 @@
 
 <script>
 import Product from './Product';
-import Home from './home';
-import Sale from './sale';
-import News from './news';
+import Diversion from './Diversion';//导流管理
+import ColdStartContent from './ColdStartContent';//冷启内容管理
+import ColdStartAccount from './ColdStartAccount';//冷启账号管理
+import Rewards from './Rewards';//奖励设置
+import NewsExamine from './NewsExamine';//内容发布审核
 import Personal from './personal';
 export default {
     components: {
       Product,
-      Home,
-      Sale,
-      News,
+      Diversion,
+      Rewards,
+      ColdStartAccount,
+      ColdStartContent,
+      NewsExamine,
       Personal,
     },
     data() {
@@ -94,30 +104,35 @@ export default {
           },
           {
             value: '1',
-            label:'主页',
-            component:'Home',
+            label:'导流管理',
+            component:'Diversion',
           },
           {
             value: '2-1',
-            label:'产品管理',
-            component:'Product',
+            label:'冷启内容管理',
+            component:'ColdStartContent',
           },
           {
             value: '2-2',
-            label:'销售情况',
-            component:'Sale',
+            label:'冷启账号管理',
+            component:'ColdStartAccount',
           },
           {
             value: '3',
-            label:'新闻管理',
-            component:'News',
+            label:'内容发布审核管理',
+            component:'NewsExamine',
+          },
+          {
+            value: '4',
+            label:'奖励模块设置',
+            component:'Rewards',
           },
         ];
         return {
             isCollapse: false,
             tabWidth: 200,
             test1: 1,
-            editableTabsValue:'2-1',
+            editableTabsValue:'1',
             intelval: null,
             changeComponent:'Product',
             menuMap,
@@ -126,7 +141,7 @@ export default {
         };
     },
     mounted(){
-      this.addMenuItem('2-1');
+      this.addMenuItem('1');
     },
     methods: {
         addMenuItem(index){
