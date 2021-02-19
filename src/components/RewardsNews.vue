@@ -1,41 +1,50 @@
 <template>
-    <div class="newsExamine-wrap">
-    <div class="table-head-wrap">
-        <el-form :model="searchForm" label-position="left">
-           <el-row>
-                <el-col :span="5">
-                  <el-form-item label="新闻标题" label-width="40px">
-                      <el-input v-model="searchForm.news_title" placeholder="请输入新闻标题"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="5">
-                  <el-form-item label="审核状态" label-width="40px" style="margin:0 12px">
-                      <el-select v-model="searchForm.news_isPass" placeholder="请选择审核状态">
-                        <el-option :label="item" :value="item" v-for="(item,index) in typeList" :key="index"></el-option>
-                      </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="2" style="margin-right:18px">
-                  <el-form-item >
-                      <el-button type="primary" icon="el-icon-search" @click="onSearch()">查询</el-button>
-                  </el-form-item>
-                  </el-col>
-                   <el-col :span="2">
-                  <el-form-item>
-                      <el-button type="info" @click="onReset">重置</el-button>
-                  </el-form-item>
-                  </el-col>
-           </el-row>
-        </el-form>
-    </div>
+    <div class="awards-news-wrap">
+      <p>活动名称：{{activityName}}</p>
+       <el-table
+    v-loading="loading"
+    :data="tableData"
+    border class="awards-table-wrap"
+    style="width: 100%">
+    <el-table-column
+      prop="aid"
+      label="AID"
+      width="100">
+    </el-table-column>
+    <el-table-column
+      prop="activity_name"
+      label="活动名称"
+      width="180">
+    </el-table-column>
+    <el-table-column
+      prop="startTime"
+      label="活动生效时间"
+      width="180">
+    </el-table-column>
+    <el-table-column
+      prop="endTime"
+      label="活动失效时间"
+      width="220">
+    </el-table-column>
+     <el-table-column
+      prop="awards"
+      label="活动奖项设置"
+      width="150">
+    </el-table-column>
+     <el-table-column
+      prop="activity_rules"
+      label="活动规则"
+      width="150">
+    </el-table-column>
+        </el-table>
         <el-table
     v-loading="loading"
     :data="tableData"
-    border class="product-table-wrap"
+    border class="awards-table-wrap"
     style="width: 100%">
     <el-table-column
-      prop="nid"
-      label="NID"
+      prop="anid"
+      label="ANID"
       width="100">
     </el-table-column>
     <el-table-column
@@ -44,32 +53,33 @@
       width="180">
     </el-table-column>
     <el-table-column
-      prop="news_date"
-      label="新闻日期"
+      prop="users_name"
+      label="用户名称"
       width="180">
     </el-table-column>
     <el-table-column
-      prop="news_content"
-      label="新闻内容"
+      prop="news_view"
+      label="新闻点击量"
       width="220">
-      <template slot-scope="scope">
-        <el-popover trigger="hover" placement="top">
-          <div style="max-width:300px;">
-            <img :src="scope.row.pro_fontTiltOne" style="width:220px;height:140px"/></div>
-          <div slot="reference" class="name-wrapper">
-            <el-tag size="medium">查看</el-tag>
-          </div>
-        </el-popover>
-      </template>
     </el-table-column>
      <el-table-column
-      prop="news_tag"
-      label="新闻标签"
+      prop="news_praise"
+      label="新闻点赞量"
       width="150">
     </el-table-column>
      <el-table-column
-      prop="news_isPass"
-      label="审核状态"
+      prop="news_comment"
+      label="新闻评论量"
+      width="150">
+    </el-table-column>
+     <el-table-column
+      prop="news_date"
+      label="新闻发布时间"
+      width="150">
+    </el-table-column>
+     <el-table-column
+      prop="news_award"
+      label="新闻奖项"
       width="150">
     </el-table-column>
      <el-table-column
@@ -79,10 +89,10 @@
       <template slot-scope="scope">
         <el-button
           type="primary" icon="el-icon-edit"  size="small"
-          @click="examinePass(scope.row.pid, scope.row)">审核通过</el-button>
+          @click="examinePass(scope.row.pid, scope.row)">评奖</el-button>
         <el-button
-          type="danger" icon="el-icon-delete"  size="small"
-          @click="examineFail(scope.row.pid, scope.row)">审核不通过</el-button>
+          type="primary" icon="el-icon-edit"  size="small"
+          @click="examinePass(scope.row.pid, scope.row)">备注</el-button>
         <el-button
           type="danger" icon="el-icon-delete"  size="small"
           @click="examineFail(scope.row.pid, scope.row)">查看日志</el-button>
@@ -108,23 +118,20 @@ export default {
         tableData: [],
         typeList:[],
         searchForm:{
-            news_isPass:'',
-            news_title:'',
+            activity_state:'',
+            activity_name:'',
             pageSize:10,
             startPage:0,
         },
         num:0,
         totalNum:0,
-        newsForm:{
-          news_title:'',
-          news_date:'',
-          news_content:'',
-          news_tag:'',
-          news_praise:'',
-          news_comment:'',
-          news_isPass:'',
-          news_view:'',
-          news_share:'',
+        activityForm:{
+          activity_name:'',
+          activity_rules:'',
+          startTime:'',
+          endTime:'',
+          activity_state:'',
+          awards:'',
         },
         currentPage:1,
         isSearch:false,
@@ -157,9 +164,8 @@ export default {
     methods:{
         onReset(){
           this.searchForm = {
-            pro_State:'',
-            pro_Name:'',
-            pro_Type:'',
+            activity_state:'',
+            activity_name:'',
             pageSize:10,
             startPage:0,
           };
