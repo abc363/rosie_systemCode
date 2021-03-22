@@ -4,16 +4,13 @@
         <el-form :model="form" label-position="left">
             <el-row>
                 <el-col :span="23">
-                    <el-form-item label="名称" label-width="40px">
+                    <el-form-item label="标题" label-width="40px">
                         <el-input v-model="form.new_title" autocomplete="off" placeholder="请输入新闻名称"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="11">
-                    <el-form-item label="系列" label-width="40px">
-                        <el-select v-model="form.new_type" placeholder="请选择系列">
-                            <el-option label="公司新闻" value="1"></el-option>
-                            <el-option label="行业状态" value="0"></el-option>
-                        </el-select>
+                    <el-form-item label="标签" label-width="40px">
+                        <el-input v-model="form.news_tag" autocomplete="off" placeholder="请输入新闻标签"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="11" style="margin-left:30px">

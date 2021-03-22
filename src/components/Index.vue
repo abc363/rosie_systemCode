@@ -82,8 +82,8 @@ import Product from './Product';
 import Diversion from './Diversion';//导流管理
 import ColdStartContent from './ColdStartContent';//冷启内容管理
 import ColdStartAccount from './ColdStartAccount';//冷启账号管理
-import Rewards from './Rewards';//奖励设置
-import NewsExamine from './NewsExamine';//内容发布审核
+import Rewards from './activity';//奖励设置
+import NewsExamine from './news-examine';//内容发布审核
 import Personal from './personal';
 export default {
     components: {

@@ -1,30 +1,21 @@
 <template>
-    <div class="news-wrap">
+    <div class="news-examine-wrap">
     <div class="table-head-wrap">
         <el-form :model="searchForm" label-position="left">
-           <el-row>
-              <el-col :span="8">
-                <el-form-item label="新闻名称" label-width="70px" style="margin-right:15px">
-                    <el-input v-model="searchForm.new_title" placeholder="请输入新闻名称"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="新闻系列" label-width="70px" style="margin-right:15px">
-                    <el-select v-model="searchForm.new_type" placeholder="请选择系列">
-                    <el-option label="公司新闻" value="1"></el-option>
-                    <el-option label="行业状态" value="0"></el-option>
-                    </el-select>
-                </el-form-item>
-              </el-col>
-           </el-row>
-        </el-form>
-        <div>
-          <el-button type="primary" icon="el-icon-search" @click="onSearch()">查询</el-button>
-          <el-button type="info" @click="onReset">重置</el-button>
-          <el-button type="danger" @click="addNews" icon="el-icon-plus">添加新闻</el-button>
-        </div>
+          <el-row>
+          <el-col :span="23">
+            <el-form-item label="新闻名称" label-width="70px" style="margin-right:15px">
+                <el-input v-model="searchForm.new_title" placeholder="请输入新闻名称"></el-input>
+            </el-form-item>
+          </el-col>
+          </el-row>
+      </el-form>
+      <div>
+        <el-button type="primary" icon="el-icon-search" @click="onSearch">查询</el-button>
+        <el-button type="info" @click="onReset">重置</el-button>
+      </div>
     </div>
-  <el-table
+    <el-table
     v-loading="loading"
     :data="tableData"
     border class="news-table-wrap"
@@ -36,7 +27,7 @@
     </el-table-column>
     <el-table-column
       prop="new_title"
-      label="新闻名称"
+      label="新闻标题"
       width="180">
     </el-table-column>
     <el-table-column
@@ -77,59 +68,59 @@
       </template>
     </el-table-column>
      <el-table-column
-      prop="new_type"
-      label="新闻系列"
-      width="150">
-      <template slot-scope="scope">
-       <el-tag type="danger" effect="dark" v-if="scope.row.new_type === '1'">公司新闻</el-tag>
-       <el-tag type="primary" effect="dark" v-else>行业状态</el-tag>
-      </template>
-    </el-table-column>
-     <el-table-column
       prop="edit"
       label="操作"
       min-width="250">
       <template slot-scope="scope">
         <el-button
           type="primary" icon="el-icon-edit"  size="small"
-          @click="handleEdit(scope.row.nid, scope.row)">修改信息</el-button>
+          @click="handleNewsPass(scope.row.nid, scope.row)">审核通过</el-button>
         <el-button
           type="danger" icon="el-icon-delete"  size="small"
-          @click="handleDelete(scope.row.nid, scope.row)">删除</el-button>
+          @click="handleNewsRefuse(scope.row.nid, scope.row)">审核拒绝</el-button>
       </template>
     </el-table-column>
-        </el-table>
-         <el-pagination
-         v-if="pageShow"
-        :current-page.sync="currentPage"
-        :page-size="defaultTable.pageSize"
-        background
-        class="paginate-wrap"
-        layout="total, prev, pager, next, jumper"
-        :total="totalNum">
-        </el-pagination>
-        <NewsDialog :dialogFormVisible="dialogFormVisible" :newsName="newsName" :isUpload="isUpload" @showNews="showNews" :num="num"
-        :newsForm="newForm" :isAdd="isAdd" @changeVisiable="changeV" @changeCurrent="changeCurrent(totalNum,true)"></NewsDialog>
+    </el-table>
+      <el-pagination
+      v-if="pageShow"
+      :current-page.sync="currentPage"
+      :page-size="defaultTable.pageSize"
+      background
+      class="paginate-wrap"
+      layout="total, prev, pager, next, jumper"
+      :total="totalNum">
+      </el-pagination>
+      <el-dialog title="审核拒绝" :visible.sync="isVisible">
+        <el-form>
+          <el-row>
+            <el-col :span="23">
+              <el-form-item>
+                <el-input v-model="refuseForm.content" placeholder="请输入备注" type="textarea"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-button @click="postRefuse">提交</el-button>
+      </el-dialog>
     </div>
 </template>
 <script>
-  import NewsDialog from './news-card';
 
 export default {
-   components: {
-      NewsDialog,
-    },
     data() {
       return {
         tableData: [],
         typeList:[],
+        refuseForm:{
+          content:'',
+        },
         searchForm:{
             new_title:'',
             new_type:'',
             pageSize:10,
             startPage:0,
         },
-        dialogFormVisible:false,
+        isVisible:false,
         newsName:'',
         num:0,
         totalNum:0,
@@ -213,46 +204,34 @@ export default {
         changeV(res){
           this.dialogFormVisible = res;
         },
-        handleEdit(nid,row){
-          this.get(`/news/${nid}/showNews`).then(res => {
-            this.isAdd = this.isUpload = false;
-            this.newForm = res;
-            this.newsName = res.new_title;
-            this.num = nid;
-            this.dialogFormVisible = true;
-          }).catch(e=>{
-            this.$error(`获取信息失败，${e}`);
-          })
+        postRefuse(){
+
         },
-        handleDelete(id,row){
-          this.$confirm(`请问您确定删除该产品${id}吗？`, '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.post(`/news/${id}/delete`).then(res=>{
-              this.$success("删除成功");
-              this.changeCurrent(this.totalNum,false);
-              this.showNews();
-            }).catch(e=>{
-              this.$error('删除失败');
-            })
-          });
-          },
-          addNews(){
-            this.newForm = {};
-            this.isAdd = true;
-            this.dialogFormVisible = true;
-          },
-          changeCurrent(num,type){
-              num = type ? num+1 : num-1;
-              this.currentPage = Math.floor(num/(this.defaultTable.pageSize+1))+1;
-          }
+        addNews(){
+          this.newForm = {};
+          this.isAdd = true;
+          this.dialogFormVisible = true;
+        },
+        changeCurrent(num,type){
+            num = type ? num+1 : num-1;
+            this.currentPage = Math.floor(num/(this.defaultTable.pageSize+1))+1;
+        },
+        handleNewsRefuse(){
+          this.isVisible = true;
+        },
+        handleNewsPass(){
+          this.post(`/users/logout`).then(res=>{
+            location.href="./index.html";
+            this.$success('审核通过成功');
+          }).catch(e=>{
+            this.$error('审核失败，请重新尝试');
+          })
+        }
     }
 }
 </script>
 <style lang="less">
-.news-wrap{
+.news-examine-wrap{
     width:100%;
     .table-head-wrap{
         background-color: #F0F0F0;
@@ -280,6 +259,7 @@ export default {
       margin-top: 20px;
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       .btn-prev,.btn-next{
         height: 40px;
         line-height: 40px;
