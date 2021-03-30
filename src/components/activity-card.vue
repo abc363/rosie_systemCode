@@ -44,14 +44,16 @@
                           type="daterange"
                           range-separator="至"
                           start-placeholder="开始日期"
-                          end-placeholder="结束日期">
+                          end-placeholder="结束日期"
+                          format="yyyy 年 MM 月 dd 日"
+                          value-format="yyyy-MM-dd">
                         </el-date-picker>
                     </el-form-item>
                 </el-col>
                   <el-col :span="23">
                     <el-form-item label="活动规则" label-width="70px">
                         <UploadFile :imageUrl="form.activity_rules" @handleUrl="handleUrl"
-                         field="new_image" :pid="num" :visiable="isVisible"></UploadFile>
+                         field="activity_rules" :pid="num" :visiable="isVisible"></UploadFile>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -80,10 +82,6 @@ export default {
             type:String,
             default:'',
         },
-        num:{
-            type:Number,
-            default:0,
-        },
         newsForm:{
             type:Object,
             default(){
@@ -94,13 +92,19 @@ export default {
             type:Boolean,
             default:false,
         },
+        activityTime:{
+          type:Array,
+          default(){
+                return [];
+            }
+        }
     },
     data(){
         return{
-            activityTime:'',
             formLabelWidth:'100',
             isVisible:false,
             form:{},
+            num:0,
             awards:[
               {
                 name:'',
@@ -124,7 +128,9 @@ export default {
             this.$emit('changeVisiable',newVal);
         },
         newsForm(newVal){
+            this.awards = newVal.awards;
             this.form = newVal;
+            this.num = newVal.aid;
         }
     },
     mounted(){
@@ -138,8 +144,11 @@ export default {
                 spinner:'el-icon-loading',//自定义加载图标类名
                 background: 'rgba(0, 0, 0, 0.7)'//遮罩层背景色
             });
-            const url = bol ? `/news/add` : `/news/${nid}/change_info`;
+            const url = bol ? `/activity/add` : `/activity/${nid}/change_info`;
             const text = bol ? '添加' : '修改';
+            this.form.awards = JSON.stringify(this.awards);
+            this.form.startTime = this.activityTime[0];
+            this.form.endTime = this.activityTime[1];
             this.post(url,this.form).then(res => {
                this.$success(`${text}成功`);
                if(bol){
@@ -149,7 +158,6 @@ export default {
                   return this.$error(`请求失败！${res.$message}`);
             }).finally(e=>{
                 this.isVisible = false;
-                this.$emit('showNews');
                 this.loading.close();
             })
         },

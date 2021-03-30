@@ -5,7 +5,7 @@
             <el-row>
                 <el-col :span="23">
                     <el-form-item label="标题" label-width="40px">
-                        <el-input v-model="form.new_title" autocomplete="off" placeholder="请输入新闻名称"></el-input>
+                        <el-input v-model="form.news_title" autocomplete="off" placeholder="请输入新闻名称"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="11">
@@ -17,8 +17,10 @@
                     <el-form-item label="时间" label-width="40px">
                         <div class="block">
                             <el-date-picker
-                            v-model="form.new_date"
+                            v-model="form.news_date"
                             type="date"
+                            format="yyyy 年 MM 月 dd 日"
+                            value-format="yyyy-MM-dd"
                             placeholder="选择日期">
                             </el-date-picker>
                         </div>
@@ -26,14 +28,14 @@
                 </el-col>
                  <el-col :span="23">
                     <el-form-item label="介绍" label-width="40px">
-                        <el-input v-model="form.new_intro" placeholder="请输入新闻介绍" type="textarea" 
+                        <el-input v-model="form.news_intro" placeholder="请输入新闻介绍" type="textarea" 
                         size="medium" maxlength="180" show-word-limit></el-input>
                     </el-form-item>
                 </el-col>
                   <el-col :span="23">
                     <el-form-item label="正图" label-width="40px">
-                        <UploadFile :imageUrl="form.new_image" @handleUrl="handleUrl"
-                         field="new_image" :pid="num" :visiable="isVisible"></UploadFile>
+                        <UploadFile :imageUrl="form.news_image" @handleUrl="handleUrl"
+                         field="news_image" :pid="num" :visiable="isVisible"></UploadFile>
                     </el-form-item>
                 </el-col>
                  <el-col :span="23">
@@ -41,7 +43,7 @@
                        <UploadFile class="news-upload" :isNewContentUpload="true" 
                        @insertQuillImage="insertQuillImage" :limit="100"></UploadFile>
                          <quill-editor
-                            v-model="form.new_content"
+                            v-model="form.news_content"
                             :options="editorOption" 
                             ref="myQuillEditor" style="height:650px" >
                         </quill-editor>
@@ -151,6 +153,7 @@ export default {
         },
         newsForm(newVal){
             this.form = newVal;
+            this.num = newVal.nid;
         }
     },
     mounted(){
@@ -166,16 +169,15 @@ export default {
             });
             const url = bol ? `/news/add` : `/news/${nid}/change_info`;
             const text = bol ? '添加' : '修改';
+            const { news_date } = this.form;
+            this.form.news_date = news_date.substring(0,10);
             this.post(url,this.form).then(res => {
                this.$success(`${text}成功`);
-               if(bol){
-                   this.$emit('changeCurrent');
-               }
+               this.$emit('showNews');
             }).catch(res=>{
                   return this.$error(`请求失败！${res.$message}`);
             }).finally(e=>{
                 this.isVisible = false;
-                this.$emit('showNews');
                 this.loading.close();
             })
         },

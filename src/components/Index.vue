@@ -224,7 +224,7 @@ export default {
               font-size: 18px;
               position: fixed;
               font-weight: 600;
-              z-index:9999;
+              z-index:600;
               .isClossTab{
                 width: 30px;
                 height: 60px;

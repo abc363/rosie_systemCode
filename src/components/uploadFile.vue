@@ -53,7 +53,7 @@ export default {
         limit:{
            type:Number,
            default:1,
-        }
+        },
     },
     data(){
         return{

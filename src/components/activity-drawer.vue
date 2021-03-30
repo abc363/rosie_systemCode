@@ -1,6 +1,7 @@
 <template>
     <div class="awards-news-wrap">
-    <p>活动名称：{{activityName}}</p><el-divider></el-divider>
+    <h3>活动名称：{{activityData[0].activity_name}}</h3>
+    <el-divider></el-divider>
     <el-table
     v-loading="loading"
     :data="activityData"
@@ -30,14 +31,49 @@
       prop="awards"
       label="活动奖项设置"
       width="150">
+      <template slot-scope="scope">
+        <el-popover trigger="hover" placement="top">
+         <el-table
+          :data="JSON.parse(scope.row.awards)"
+          style="width: 100%">
+          <el-table-column
+            prop="name"
+            label="奖项"
+            width="80">
+          </el-table-column>
+          <el-table-column
+            prop="count"
+            label="数量"
+            width="80">
+          </el-table-column>
+          <el-table-column
+            prop="money"
+            label="金额"
+            width="80">
+          </el-table-column>
+        </el-table>
+        <div slot="reference" class="name-wrapper">
+            <el-tag size="medium">查看</el-tag>
+          </div>
+        </el-popover>
+      </template>
     </el-table-column>
      <el-table-column
       prop="activity_rules"
       label="活动规则"
       width="150">
+       <template slot-scope="scope">
+        <el-popover trigger="hover" placement="top">
+          <div style="max-width:300px;">
+            <img :src="scope.row.activity_rules" style="width:220px;height:140px"/></div>
+          <div slot="reference" class="name-wrapper">
+            <el-tag size="medium">查看</el-tag>
+          </div>
+        </el-popover>
+      </template>
     </el-table-column>
     </el-table>
-    <p>视频列表</p><el-divider></el-divider>
+    <h3 class="h3-wrap">视频列表</h3><el-divider></el-divider>
     <el-table
     v-loading="loading"
     :data="tableData"
@@ -94,9 +130,6 @@
         <el-button
           type="primary" icon="el-icon-edit"  size="small"
           @click="setRemarks(scope.row.pid, scope.row)">备注</el-button>
-        <el-button
-          type="danger" icon="el-icon-delete"  size="small"
-          @click="getDiary(scope.row.pid, scope.row)">查看日志</el-button>
       </template>
     </el-table-column>
         </el-table>
@@ -118,7 +151,12 @@ export default {
       activityData:{
         type:Array,
         default:[],
+      },
+      activityName:{
+        type:String,
+        default:'',
       }
+
     },
     data() {
       return {
@@ -224,8 +262,16 @@ export default {
 }
 </script>
 <style lang="less">
+ .el-drawer{
+    width: 50% !important;
+    padding:  0 20px;
+     .h3-wrap{
+      margin-top: 30px;
+    }
+  }
 .product-wrap{
     width:100%;
+   
     .table-head-wrap{
         background-color: #F0F0F0;
         height: 70px;

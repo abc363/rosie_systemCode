@@ -1,19 +1,15 @@
 <template>
     <div class="news-examine-wrap">
     <div class="table-head-wrap">
-        <el-form :model="searchForm" label-position="left">
-          <el-row>
-          <el-col :span="23">
-            <el-form-item label="新闻名称" label-width="70px" style="margin-right:15px">
-                <el-input v-model="searchForm.new_title" placeholder="请输入新闻名称"></el-input>
-            </el-form-item>
-          </el-col>
-          </el-row>
+        <el-form :model="searchForm" label-position="left" :inline="true">
+          <el-form-item label="新闻名称" label-width="70px" style="margin-right:15px">
+              <el-input v-model="searchForm.news_title" placeholder="请输入新闻名称"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" @click="onSearch">查询</el-button>
+            <el-button type="info" @click="onReset">重置</el-button>
+          </el-form-item>
       </el-form>
-      <div>
-        <el-button type="primary" icon="el-icon-search" @click="onSearch">查询</el-button>
-        <el-button type="info" @click="onReset">重置</el-button>
-      </div>
     </div>
     <el-table
     v-loading="loading"
@@ -26,26 +22,26 @@
       width="100">
     </el-table-column>
     <el-table-column
-      prop="new_title"
+      prop="news_title"
       label="新闻标题"
       width="180">
     </el-table-column>
     <el-table-column
-      prop="new_date"
+      prop="news_date"
       label="新闻日期"
       width="220">
       <template slot-scope="scope">
-       <span>{{ scope.row.new_date.split('T')[0] }}</span>
+       <span>{{ scope.row.news_date }}</span>
       </template>
     </el-table-column>
     <el-table-column
-      prop="new_intro"
+      prop="news_intro"
       label="新闻介绍"
       width="220">
       <template slot-scope="scope">
         <el-popover trigger="hover" placement="top">
           <div style="max-width:300px;">
-            <span>{{ scope.row.new_intro }}</span>
+            <span>{{ scope.row.news_intro }}</span>
           </div>
           <div slot="reference" class="name-wrapper">
             <el-tag size="medium">查看</el-tag>
@@ -54,17 +50,24 @@
       </template>
     </el-table-column>
      <el-table-column
-      prop="new_image"
+      prop="news_image"
       label="新闻正图"
       width="220">
       <template slot-scope="scope">
         <el-popover trigger="hover" placement="top">
           <div style="max-width:300px;">
-            <img :src="scope.row.new_image" style="width:220px;height:140px"/></div>
+            <img :src="scope.row.news_image" style="width:220px;height:140px"/></div>
           <div slot="reference" class="name-wrapper">
             <el-tag size="medium">查看</el-tag>
           </div>
         </el-popover>
+      </template>
+    </el-table-column>
+     <el-table-column
+      label="新闻状态"
+      width="220">
+      <template slot-scope="scope">
+       <span>{{ scope.row.news_isPass == 1?'已通过':(scope.row.news_isPass == 0?'未审核':'未通过')}}</span>
       </template>
     </el-table-column>
      <el-table-column
@@ -73,11 +76,11 @@
       min-width="250">
       <template slot-scope="scope">
         <el-button
-          type="primary" icon="el-icon-edit"  size="small"
-          @click="handleNewsPass(scope.row.nid, scope.row)">审核通过</el-button>
+          type="primary"  size="small"
+          @click="handleNews(1,scope.row)" :disabled="scope.row.news_isPass !== 0 ">审核通过</el-button>
         <el-button
-          type="danger" icon="el-icon-delete"  size="small"
-          @click="handleNewsRefuse(scope.row.nid, scope.row)">审核拒绝</el-button>
+          type="danger" size="small"
+          @click="handleNews(0,scope.row)" :disabled="scope.row.news_isPass !== 0">审核拒绝</el-button>
       </template>
     </el-table-column>
     </el-table>
@@ -90,17 +93,10 @@
       layout="total, prev, pager, next, jumper"
       :total="totalNum">
       </el-pagination>
-      <el-dialog title="审核拒绝" :visible.sync="isVisible">
-        <el-form>
-          <el-row>
-            <el-col :span="23">
-              <el-form-item>
-                <el-input v-model="refuseForm.content" placeholder="请输入备注" type="textarea"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        <el-button @click="postRefuse">提交</el-button>
+      <el-dialog title="提示：审核拒绝" :visible.sync="isVisible">
+        <el-input v-model="refuseForm.content" placeholder="请输入审核拒绝原因" type="textarea" class="dialog-input-wrap"></el-input>
+        <el-button @click="postRefuse" type="primary">提交</el-button>
+        <el-button @click="isVisible = false">取消</el-button>
       </el-dialog>
     </div>
 </template>
@@ -115,8 +111,8 @@ export default {
           content:'',
         },
         searchForm:{
-            new_title:'',
-            new_type:'',
+            news_title:'',
+            news_type:'',
             pageSize:10,
             startPage:0,
         },
@@ -125,12 +121,12 @@ export default {
         num:0,
         totalNum:0,
         newForm:{
-         new_title: '',
-         new_content: '',
-         new_type: '',
-         new_image: '',
-         new_intro: '',
-         new_date: '',
+         news_title: '',
+         news_content: '',
+         news_type: '',
+         news_image: '',
+         news_intro: '',
+         news_date: '',
         },
         isAdd:false,
         isUpload:true,
@@ -138,6 +134,7 @@ export default {
         isSearch:false,
         pageShow:true,
         loading:true,
+        chooseObj:{},
         defaultTable:{
           pageSize:10,
           startPage:0,
@@ -165,8 +162,8 @@ export default {
     methods:{
         onReset(){
           this.searchForm = {
-            new_title:'',
-            new_type:'',
+            news_title:'',
+            news_type:'',
             pageSize:10,
             startPage:0,
           };
@@ -193,7 +190,7 @@ export default {
                 this.totalNum = res.totalNum;
                 this.typeList = [];
                 this.tableData.forEach(item=>{
-                  !this.typeList.includes(item.new_type) && this.typeList.push(item.new_type);
+                  !this.typeList.includes(item.news_type) && this.typeList.push(item.news_type);
                 })
             }).catch(e=>{
               this.$error(`展示出错，${e}`);
@@ -205,7 +202,15 @@ export default {
           this.dialogFormVisible = res;
         },
         postRefuse(){
-
+          this.chooseObj.news_refuselog = this.refuseForm.content;
+          this.chooseObj.news_isPass = -1;
+          this.post(`/news/${this.chooseObj.nid}/change_info`,this.chooseObj).then(res=>{
+            this.$success('审核拒绝成功');
+            this.isVisible = false;
+            this.showNews();
+          }).catch(e=>{
+            this.$error('审核失败，请重新尝试');
+          })
         },
         addNews(){
           this.newForm = {};
@@ -219,13 +224,19 @@ export default {
         handleNewsRefuse(){
           this.isVisible = true;
         },
-        handleNewsPass(){
-          this.post(`/users/logout`).then(res=>{
-            location.href="./index.html";
-            this.$success('审核通过成功');
-          }).catch(e=>{
-            this.$error('审核失败，请重新尝试');
-          })
+        handleNews(num,obj){
+          if(num === 0){
+            this.isVisible = true;
+            this.chooseObj = obj;
+          }else{
+            obj.news_isPass = 1;
+            this.post(`/news/${obj.nid}/change_info`,obj).then(res=>{
+              this.$success('审核通过成功');
+              this.showNews();
+            }).catch(e=>{
+              this.$error('审核失败，请重新尝试');
+            })
+          }
         }
     }
 }
@@ -233,6 +244,9 @@ export default {
 <style lang="less">
 .news-examine-wrap{
     width:100%;
+    .dialog-input-wrap{
+        margin-bottom: 20px;
+    }
     .table-head-wrap{
         background-color: #F0F0F0;
         height: 70px;
