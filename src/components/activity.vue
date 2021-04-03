@@ -129,7 +129,7 @@
         :total="totalNum">
         </el-pagination>
         <ActivityCard :dialogFormVisible="dialogFormVisible" :isUpload="isUpload" :isAdd="isAdd"
-        :newsForm="newsForm" @changeCurrent="changeCurrent" :activityTime="activityTime"></ActivityCard>
+        :newsForm="newsForm" @changeCurrent="changeCurrent" :activityTime="activityTime" @changeVisiable="changeVisiable"></ActivityCard>
         <el-drawer
           :visible.sync="drawerShow"
           direction="rtl">
@@ -202,6 +202,9 @@ export default {
         this.showPro();
     },
     methods:{
+      changeVisiable(newVal){
+        this.dialogFormVisible = newVal;
+      },
         setActivityState(obj){
           obj.activity_state = '1';
           this.post(`/activity/${obj.aid}/change_info`,obj).then(res=>{
