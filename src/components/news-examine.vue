@@ -5,6 +5,11 @@
           <el-form-item label="新闻名称" label-width="70px" style="margin-right:15px">
               <el-input v-model="searchForm.news_title" placeholder="请输入新闻名称"></el-input>
           </el-form-item>
+          <el-form-item label="新闻标签" label-width="70px" style="margin-right:15px">
+               <el-select v-model="searchForm.news_tag" placeholder="请选择新闻标签">
+                <el-option :label="item" :value="item" v-for="(item,index) in typeList" :key="index"></el-option>
+              </el-select>
+            </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" @click="onSearch">查询</el-button>
             <el-button type="info" @click="onReset">重置</el-button>
@@ -12,6 +17,7 @@
       </el-form>
     </div>
     <el-table
+    stripe
     v-loading="loading"
     :data="tableData"
     border class="news-table-wrap"
@@ -112,7 +118,7 @@ export default {
         },
         searchForm:{
             news_title:'',
-            news_type:'',
+            news_tag:'',
             pageSize:10,
             startPage:0,
         },
@@ -123,7 +129,7 @@ export default {
         newForm:{
          news_title: '',
          news_content: '',
-         news_type: '',
+         news_tag: '',
          news_image: '',
          news_intro: '',
          news_date: '',
@@ -163,7 +169,7 @@ export default {
         onReset(){
           this.searchForm = {
             news_title:'',
-            news_type:'',
+            news_tag:'',
             pageSize:10,
             startPage:0,
           };
@@ -190,7 +196,7 @@ export default {
                 this.totalNum = res.totalNum;
                 this.typeList = [];
                 this.tableData.forEach(item=>{
-                  !this.typeList.includes(item.news_type) && this.typeList.push(item.news_type);
+                  !this.typeList.includes(item.news_tag) && this.typeList.push(item.news_tag);
                 })
             }).catch(e=>{
               this.$error(`展示出错，${e}`);

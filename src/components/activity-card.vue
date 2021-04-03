@@ -94,9 +94,7 @@ export default {
         },
         activityTime:{
           type:Array,
-          default(){
-                return [];
-            }
+          default:[],
         }
     },
     data(){
@@ -128,7 +126,6 @@ export default {
             this.$emit('changeVisiable',newVal);
         },
         newsForm(newVal){
-            this.awards = newVal.awards;
             this.form = newVal;
             this.num = newVal.aid;
         }

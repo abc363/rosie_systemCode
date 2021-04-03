@@ -6,6 +6,11 @@
             <el-form-item label="新闻名称" label-width="70px" style="margin-right:15px">
                 <el-input v-model="searchForm.news_title" placeholder="请输入新闻名称"></el-input>
             </el-form-item>
+             <el-form-item label="新闻标签" label-width="70px" style="margin-right:15px">
+               <el-select v-model="searchForm.news_tag" placeholder="请选择新闻标签">
+                <el-option :label="item" :value="item" v-for="(item,index) in tagList" :key="index"></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="onSearch">查询</el-button>
               <el-button type="info" @click="onReset">重置</el-button>
@@ -18,7 +23,7 @@
     </div>
       <Table :tableData="tableData" :totalNum="totalNum" @toEidtDialog="toEidtDialog"></Table>
       <NewsCard :dialogFormVisible="dialogFormVisible" @showNews="showNews" :newsName="newsName" :isUpload="isUpload" :isAdd="isAdd"
-      :newsForm="newsForm"></NewsCard>
+      :newsForm="newsForm" :isCold="isCold"></NewsCard>
     </div>
 </template>
 <script>
@@ -34,9 +39,13 @@ export default {
       return{
         newsName:'',
         isUpload:true,
+        isCold:true,
         newsForm:{},
         isAdd:false,
+        tagList:[],
         searchForm:{
+          news_title:'',
+          news_tag:'',
           pageSize:10,
           startPage:0,
         },
@@ -62,8 +71,18 @@ export default {
       },
       showNews(){
         this.get("/news/show",this.defaultTable).then((res)=>{
-          this.tableData = res.tableData;
-          this.totalNum = res.totalNum;
+          this.tableData = [];
+          this.tagList = [];
+          // 是冷启才展示
+          res.tableData.forEach(e=>{
+            if(e.news_isCold==1){
+              this.tableData.push(e);
+            }
+            if(this.tagList.indexOf(e.news_tag)===-1){
+              this.tagList.push(e.news_tag);
+            }
+          })
+          this.totalNum = this.tableData.length;
         }).catch(e=>{
           this.$error(`展示出错，${e}`);
         }).finally(e=>{
@@ -72,16 +91,18 @@ export default {
       },
       onSearch(){
         this.post('/news/search',this.searchForm).then(res=>{
-          this.tableData = res.data.tableData;
-          this.totalNum = res.data.totalNum;
-          this.showNews();
-        }).catch(e=>{
-          this.$error('查询失败！');
+          res.tableData.forEach(e=>{
+            if(e.news_isCold==1){
+              this.tableData.push(e);
+            }
+          })
+          this.totalNum = this.tableData.length;
         })
       },
       onReset(){
         this.searchForm = {
-          new_title:'',
+          news_title:'',
+          news_tag:'',
           pageSize:10,
           startPage:0,
         };

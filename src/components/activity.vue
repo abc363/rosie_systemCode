@@ -23,6 +23,7 @@
       </div>
     </div>
         <el-table
+        stripe
     v-loading="loading"
     :data="tableData"
     border class="awards-table-wrap"
@@ -133,7 +134,7 @@
         <el-drawer
           :visible.sync="drawerShow"
           direction="rtl">
-          <ActivityDrawer :activityData="activityData"></ActivityDrawer>
+          <ActivityDrawer :activityData="activityData" :drawerShow="drawerShow"></ActivityDrawer>
         </el-drawer>
     </div>
 </template>

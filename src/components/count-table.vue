@@ -1,6 +1,7 @@
 <template>
   <div class="table-class">
     <el-table
+    stripe
     v-loading="loading"
     :data="data"
     border class="news-table-wrap"

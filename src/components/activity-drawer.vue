@@ -3,6 +3,7 @@
     <h3>活动名称：{{activityData[0].activity_name}}</h3>
     <el-divider></el-divider>
     <el-table
+    stripe
     v-loading="loading"
     :data="activityData"
     border class="awards-table-wrap"
@@ -77,11 +78,12 @@
     <el-table
     v-loading="loading"
     :data="tableData"
+    stripe
     border class="awards-table-wrap"
     style="width: 100%">
     <el-table-column
-      prop="anid"
-      label="ANID"
+      prop="nid"
+      label="NID"
       width="100">
     </el-table-column>
     <el-table-column
@@ -90,8 +92,8 @@
       width="180">
     </el-table-column>
     <el-table-column
-      prop="users_name"
-      label="用户名称"
+      prop="uaid"
+      label="用户ID"
       width="180">
     </el-table-column>
     <el-table-column
@@ -118,18 +120,54 @@
       prop="news_award"
       label="新闻奖项"
       width="150">
+      <template slot-scope="scope">
+        <span>{{scope.row.news_award ?  scope.row.news_award:'待评奖'}}</span>
+      </template>
+    </el-table-column>
+     <el-table-column
+      prop="news_activitylog"
+      label="奖项备注"
+      width="150">
     </el-table-column>
      <el-table-column
       prop="edit"
       label="操作"
       min-width="250">
       <template slot-scope="scope">
-        <el-button
+        <el-popover
+          placement="top-start"
+          width="250"
+          trigger="click">
+         <el-select v-model="chooseAwards" placeholder="请选择">
+            <el-option
+              v-for="(item,index) in awards"
+              :key="index"
+              :label="item.name+'(剩余：'+(item.count-awardsCountArry[index])+')'"
+              :value="item.name"
+              :disabled="item.count===awardsCountArry[index]">
+            </el-option>
+         </el-select>
+         <el-button type="primary"  size="small" @click="setAwards(scope.row)" style="margin-top:10px">确定</el-button>
+          <el-button
           type="primary" icon="el-icon-edit"  size="small"
-          @click="examineAwards(scope.row.pid, scope.row)">评奖</el-button>
-        <el-button
+          slot="reference">评奖</el-button>
+        </el-popover>
+        <el-popover
+          placement="top-start"
+          width="250"
+          trigger="click">
+          <el-input
+            type="textarea"
+            :rows="2"
+            placeholder="请输入备注"
+            v-model="newsActivityLog">
+          </el-input>
+         <el-button type="primary"  size="small" @click="setRemarks(scope.row)"  style="margin-top:10px">确定</el-button>
+         <el-button
           type="primary" icon="el-icon-edit"  size="small"
-          @click="setRemarks(scope.row.pid, scope.row)">备注</el-button>
+          slot="reference">备注</el-button>
+        </el-popover>
+       
       </template>
     </el-table-column>
         </el-table>
@@ -155,20 +193,19 @@ export default {
       activityName:{
         type:String,
         default:'',
+      },
+      drawerShow:{
+        type:Boolean,
       }
-
     },
     data() {
       return {
         tableData: [],
-        typeList:[],
-        searchForm:{
-            activity_state:'',
-            activity_name:'',
-            pageSize:10,
-            startPage:0,
-        },
+        chooseAwards:'',
         num:0,
+        awards:[],
+        awardsArry:[],
+        awardsCountArry:[],
         totalNum:0,
         activityForm:{
           activity_name:'',
@@ -178,9 +215,11 @@ export default {
           activity_state:'',
           awards:'',
         },
+        anid:0,
         currentPage:1,
         isSearch:false,
         pageShow:true,
+        newsActivityLog:'',
         loading:true,
         defaultTable:{
           pageSize:10,
@@ -189,65 +228,52 @@ export default {
       }
     },
     watch:{
-      currentPage(newVal){
-        if(this.isSearch){
-          this.searchForm.startPage = this.searchForm.pageSize*(newVal-1);
-          this.onSearch();
-        }else{
-          this.defaultTable.startPage = this.defaultTable.pageSize*(newVal-1);
-          this.showPro();
-        }
-        this.pageShow = false;
-    　　this.$nextTick(() => {
-    　　  this.pageShow = true;
-    　　})
-      }
+       drawerShow:{
+          immediate:true,
+          handler:function(newVal){
+            console.log("321687")
+            if(newVal==true){
+              this.showPro();
+            }
+          }
+       },
     },
     mounted(){
-        this.showPro();
+      this.awards = JSON.parse(this.activityData[0].awards);
+      this.awardsArry = this.awards.map(obj => {return obj.name});
+      this.awardsArry.forEach(e=>{
+        this.awardsCountArry.push(0);
+      })
     },
     methods:{
-      examineAwards(){
-
+      setAwards(el){
+        el.news_award = this.chooseAwards;
+        this.post(`news/${el.nid}/change_info`,el).then(res=>{
+          this.showPro();
+          this.chooseAwards = '';
+        }).catch(e=>{
+          this.$error('评奖失败！');
+        })
       },
-      setRemarks(){
-
+      setRemarks(el){
+        el.news_activitylog = this.newsActivityLog;
+        this.post(`news/${el.nid}/change_info`,el).then(res=>{
+          this.showPro();
+        }).catch(e=>{
+          this.$error('备注失败！');
+        })
       },
-      getDiary(){
-
-      },
-        onReset(){
-          this.searchForm = {
-            activity_state:'',
-            activity_name:'',
-            pageSize:10,
-            startPage:0,
-          };
-          this.isSearch = false;
-          this.defaultTable.startPage = 0;
-          if(this.currentPage == 1){
-            this.showPro();
-          }else{
-            this.currentPage = 1;
-          }
-        },
-        onSearch(){
-          this.post('news/search',this.searchForm).then(res=>{
-            this.tableData = res.data.tableData;
-            this.totalNum = res.data.totalNum;
-            this.isSearch = true;
-          }).catch(e=>{
-            this.$error('查询失败！');
-          })
-        },
         showPro(){
-            this.get("/news/show",this.defaultTable).then((res)=>{
-                this.tableData = res.tableData;
-                this.totalNum = res.totalNum;
-                this.typeList = [];
-                this.tableData.forEach(item=>{
-                  !this.typeList.includes(item.pro_Type) && this.typeList.push(item.pro_Type);
+          this.anid = this.activityData[0].aid;
+            this.get(`/news/${this.anid}/showNewsActivity`,this.defaultTable).then((res)=>{
+                this.tableData = res;
+                res.forEach(e=>{
+                  if(e.news_award){
+                      const index = this.awardsArry.indexOf(e.news_award);
+                      this.awardsCountArry[index]+=1;
+                  }
                 })
+                this.totalNum = res.length;
             }).catch(e=>{
               this.$error(`展示出错，${e}`);
             }).finally(e=>{

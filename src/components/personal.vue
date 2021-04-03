@@ -12,6 +12,7 @@
         <div class="personal-right">
             <p>用户管理：</p>
               <el-table
+              stripe
                 :data="tableData"
                 border class="product-table-wrap"
                 style="width: 100%;margin-top:10px">

@@ -112,6 +112,10 @@ export default {
             type:Boolean,
             default:false,
         },
+        isCold:{
+          type:Boolean,
+          default:false,
+        }
     },
     data(){
         return{
@@ -171,6 +175,7 @@ export default {
             const text = bol ? '添加' : '修改';
             const { news_date } = this.form;
             this.form.news_date = news_date.substring(0,10);
+            this.isCold && (this.form.news_isCold = 1);
             this.post(url,this.form).then(res => {
                this.$success(`${text}成功`);
                this.$emit('showNews');

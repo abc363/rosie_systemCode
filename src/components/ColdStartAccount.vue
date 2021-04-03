@@ -4,7 +4,7 @@
          <div class="table-head-form">
           <el-form :model="searchForm" label-position="left" :inline="true">
             <el-form-item label="账号名称" label-width="70px" style="margin-right:15px">
-              <el-input v-model="searchForm.new_title" placeholder="请输入账号名称"></el-input>
+              <el-input v-model="searchForm.username" placeholder="请输入账号名称"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="onSearch">查询</el-button>
@@ -34,7 +34,7 @@ export default {
         newsName:'',
         isUpload:true,
         searchForm:{
-          new_title:'',
+          username:'',
           pageSize:10,
           startPage:0,
         },
@@ -64,10 +64,16 @@ export default {
         });
       },
       onSearch(){
+        this.post('/userApplication/search',this.searchForm).then(res=>{
+          this.tableData = res;
+          this.totalNum = this.totalNum;
+        }).catch(e=>{
+          this.$error('查询失败！');
+        })
       },
       onReset(){
         this.searchForm={
-          new_title:'',
+          username:'',
           pageSize:10,
           startPage:0,
         }

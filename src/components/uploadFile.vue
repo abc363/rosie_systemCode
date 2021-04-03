@@ -129,7 +129,6 @@ export default {
              this.post('/products/deleteFile',this.delForm).then(res=>{
                     this.$success('删除成功！');
                     this.$emit('handleUrl','',this.field,'');
-
                 }).catch(e=>{
                     this.$error(`删除失败！${e}`);
                 })
