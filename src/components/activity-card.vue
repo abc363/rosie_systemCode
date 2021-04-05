@@ -42,6 +42,7 @@
                          <el-date-picker
                           v-model="activityTime"
                           type="daterange"
+                          :picker-options="pickerOptions"
                           range-separator="至"
                           start-placeholder="开始日期"
                           end-placeholder="结束日期"
@@ -102,6 +103,11 @@ export default {
             formLabelWidth:'100',
             isVisible:false,
             form:{},
+            pickerOptions: { 
+              disabledDate(time) {
+                  return time.getTime() < Date.now();//如果没有后面的-8.64e7就是不可以选择今天的 
+              },
+            },
             num:0,
             awards:[
               {

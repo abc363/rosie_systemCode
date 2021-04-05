@@ -26,6 +26,11 @@
                         </div>
                     </el-form-item>
                 </el-col>
+                <el-col :span="23">
+                    <el-form-item label="关键词" label-width="60px">
+                        <el-input v-model="form.news_keywords" autocomplete="off" placeholder="请输入新闻关键词，以顿号分割"></el-input>
+                    </el-form-item>
+                </el-col>
                  <el-col :span="23">
                     <el-form-item label="介绍" label-width="40px">
                         <el-input v-model="form.news_intro" placeholder="请输入新闻介绍" type="textarea" 

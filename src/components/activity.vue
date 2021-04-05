@@ -100,7 +100,8 @@
       label="活动状态"
       width="150">
       <template slot-scope="scope">
-        <span>{{scope.row.activity_state ? '已上架':'未上架'}}</span>
+        <el-tag v-if="scope.row.activity_state" type="success">已上架</el-tag>
+        <el-tag v-else type="danger">未上架</el-tag>
       </template>
     </el-table-column>
      <el-table-column

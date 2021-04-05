@@ -7,9 +7,17 @@
   <title>Document</title>
 </head>
 <body>
-  <script>
-    const res = moment(Date.now(), 'YYYY-MM-DD HH:mm:ss').valueOf();
-    console.log(res)
-  </script>
+  <button>btn</button>
+<script>
+    var btn = document.getElementsByTagName('button')[0];
+    // console.log(document.getElementsByTagName('div'))
+    // var btn = document.querySelector('div')
+    btn.addEventListener('click', function(e) {
+        // e = e || window.event;
+        console.log('hhh')
+        // // console.log(e.target.nodeName)
+        // e.target.style.fontSize = 20 + 'px';
+    },false)
+</script>
 </body>
 </html>

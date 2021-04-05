@@ -22,6 +22,11 @@
       width="220">
     </el-table-column>
     <el-table-column
+      prop="news_tag"
+      label="新闻标签"
+      width="220">
+    </el-table-column>
+    <el-table-column
       prop="news_intro"
       label="新闻介绍"
       width="220">
@@ -54,7 +59,9 @@
       label="新闻状态"
       width="220">
       <template slot-scope="scope">
-       <span>{{ scope.row.news_isPass == 1?'已通过':(scope.row.news_isPass == 0?'未审核':'未通过')}}</span>
+        <el-tag type="success" v-if="scope.row.news_isPass == 1">已通过</el-tag>
+        <el-tag v-else-if="scope.row.news_isPass == 0">未审核</el-tag>
+        <el-tag type="danger" v-else>未通过</el-tag>
       </template>
     </el-table-column>
      <el-table-column

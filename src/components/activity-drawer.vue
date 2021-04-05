@@ -121,7 +121,8 @@
       label="新闻奖项"
       width="150">
       <template slot-scope="scope">
-        <span>{{scope.row.news_award ?  scope.row.news_award:'待评奖'}}</span>
+        <span v-if="scope.row.news_award">{{scope.row.news_award}}</span>
+        <el-tag v-else type="danger">待评奖</el-tag>
       </template>
     </el-table-column>
      <el-table-column
