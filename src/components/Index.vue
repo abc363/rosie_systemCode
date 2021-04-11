@@ -29,7 +29,7 @@
                 <el-menu-item index="1">
                    <template slot="title">
                     <i class="el-icon-s-home"></i>
-                    <span slot="title">导流管理</span>
+                    <span slot="title">首页</span>
                   </template>
                 </el-menu-item>
                 <el-submenu index="2">
@@ -44,11 +44,17 @@
                 </el-submenu>
                 <el-menu-item index="3">
                    <template slot="title">
-                    <i class="el-icon-money" ></i>
+                    <i class="el-icon-s-claim" ></i>
                     <span slot="title">内容发布审核管理</span>
                    </template>
                 </el-menu-item>
-                <el-menu-item index="4">
+                 <el-menu-item index="4">
+                   <template slot="title">
+                    <i class="el-icon-set-up" ></i>
+                    <span slot="title">发布器权限管理</span>
+                   </template>
+                </el-menu-item>
+                <el-menu-item index="5">
                    <template slot="title">
                     <i class="el-icon-money" ></i>
                     <span slot="title">奖励模块设置</span>
@@ -79,12 +85,13 @@
 
 <script>
 import Product from './Product';
-import Diversion from './Diversion';//导流管理
+import Diversion from './Diversion';//首页
 import ColdStartContent from './ColdStartContent';//冷启内容管理
 import ColdStartAccount from './ColdStartAccount';//冷启账号管理
 import Rewards from './activity';//奖励设置
 import NewsExamine from './news-examine';//内容发布审核
 import Personal from './personal';
+import Publish from './publish';
 export default {
     components: {
       Product,
@@ -94,6 +101,7 @@ export default {
       ColdStartContent,
       NewsExamine,
       Personal,
+      Publish,
     },
     data() {
        const menuMap=[
@@ -104,7 +112,7 @@ export default {
           },
           {
             value: '1',
-            label:'导流管理',
+            label:'首页',
             component:'Diversion',
           },
           {
@@ -124,6 +132,11 @@ export default {
           },
           {
             value: '4',
+            label:'发布器权限管理',
+            component:'Publish',
+          },
+          {
+            value: '5',
             label:'奖励模块设置',
             component:'Rewards',
           },
