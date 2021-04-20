@@ -11,6 +11,8 @@ import './assets/css/global.css'
 import './assets/icon/iconfont.css'
 import axios from 'axios'
 import  {get , post } from "./scripts/utils/helper.js"  //  form 后就加上你文件的地址
+import echarts from 'echarts';
+Vue.use(echarts);
 Vue.prototype.get = get;
 Vue.prototype.post = post ;
 Vue.prototype.$error = function (msg) {

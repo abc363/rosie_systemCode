@@ -224,12 +224,19 @@ export default {
           this.dialogFormVisible = true;
         },
         deleteActivity(obj){
-          this.post(`/activity/${obj.aid}/delete`).then(res=>{
+           this.$alert('你确定要删除该活动吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          callback: action => {
+             this.post(`/activity/${obj.aid}/delete`).then(res=>{
             this.$success("删除活动成功！");
             this.showPro();
           }).catch(e=>{
             this.$error('删除活动失败！');
           })
+          }
+        });
         },
         onReset(){
           this.searchForm = {

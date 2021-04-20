@@ -4,7 +4,7 @@ import { TimeSelect } from 'element-ui';
 const instance = axios.create({
   // baseURL: 'http://backend.windiiot.com/',
   baseURL: 'http://120.55.95.122:8080/',
-  timeout: 15000
+  timeout: 15000,
 })
 
 //  http request 拦截器
@@ -18,7 +18,11 @@ instance.interceptors.request.use(
       }
   
     }
-    return config
+    if(config.baseURL === 'http://120.55.95.122:8080/'){
+      return config
+    }
+
+    
   }, err => {
     return Promise.reject(err)
   }

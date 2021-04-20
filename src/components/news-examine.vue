@@ -25,17 +25,20 @@
     <el-table-column
       prop="nid"
       label="NID"
-      width="100">
+      width="80">
     </el-table-column>
     <el-table-column
       prop="news_title"
       label="新闻标题"
-      width="180">
+      width="220">
+      <template slot-scope="scope">
+        <span style="color:#409EFF;cursor:pointer" @click="showDrawer(scope.row)">{{scope.row.news_title}}</span>
+      </template>
     </el-table-column>
     <el-table-column
       prop="news_date"
       label="新闻日期"
-      width="220">
+      width="150">
       <template slot-scope="scope">
        <span>{{ scope.row.news_date }}</span>
       </template>
@@ -43,7 +46,7 @@
     <el-table-column
       prop="news_intro"
       label="新闻介绍"
-      width="220">
+      width="150">
       <template slot-scope="scope">
         <el-popover trigger="hover" placement="top">
           <div style="max-width:300px;">
@@ -58,7 +61,7 @@
      <el-table-column
       prop="news_image"
       label="新闻正图"
-      width="220">
+      width="150">
       <template slot-scope="scope">
         <el-popover trigger="hover" placement="top">
           <div style="max-width:300px;">
@@ -70,8 +73,13 @@
       </template>
     </el-table-column>
      <el-table-column
+      prop="news_tag"
+      label="新闻标签"
+      width="140">
+    </el-table-column>
+     <el-table-column
       label="新闻状态"
-      width="220">
+      width="150">
       <template slot-scope="scope">
        <span>{{ scope.row.news_isPass == 1?'已通过':(scope.row.news_isPass == 0?'未审核':'未通过')}}</span>
       </template>
@@ -79,7 +87,7 @@
      <el-table-column
       prop="edit"
       label="操作"
-      min-width="250">
+      min-width="280">
       <template slot-scope="scope">
         <el-button
           type="primary"  size="small"
@@ -104,6 +112,16 @@
         <el-button @click="postRefuse" type="primary">提交</el-button>
         <el-button @click="isVisible = false">取消</el-button>
       </el-dialog>
+      <el-dialog
+  title="查看新闻内容"
+  :visible.sync="dialogVisible"
+  width="40%"
+  >
+  <span v-html="htmlShow" class="html-wrap"></span>
+  <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+</el-dialog>
     </div>
 </template>
 <script>
@@ -113,6 +131,7 @@ export default {
       return {
         tableData: [],
         typeList:[],
+        htmlShow:'',
         refuseForm:{
           content:'',
         },
@@ -135,6 +154,7 @@ export default {
          news_date: '',
         },
         isAdd:false,
+        dialogVisible:false,
         isUpload:true,
         currentPage:1,
         isSearch:false,
@@ -180,6 +200,10 @@ export default {
           }else{
             this.currentPage = 1;
           }
+        },
+        showDrawer(obj){
+          this.dialogVisible=true;
+          this.htmlShow = obj.news_content;
         },
         onSearch(){
           this.post('news/search',this.searchForm).then(res=>{
@@ -250,6 +274,11 @@ export default {
 <style lang="less">
 .news-examine-wrap{
     width:100%;
+    .html-wrap{
+      img{
+        width: 100%;
+      }
+    }
     .dialog-input-wrap{
         margin-bottom: 20px;
     }

@@ -69,11 +69,13 @@
 <script>
 import Vue from 'vue';
 import UploadFile from './uploadFile';
+import {mixins} from '../mixins.js';
 
 export default {
     components: {
       UploadFile,
     },
+    mixins:[mixins],
     props:{
         dialogFormVisible:{
             type:Boolean,
@@ -152,19 +154,24 @@ export default {
             this.form.awards = JSON.stringify(this.awards);
             this.form.startTime = this.activityTime[0];
             this.form.endTime = this.activityTime[1];
-            this.post(url,this.form).then(res => {
-               this.$success(`${text}成功`);
-               if(bol){
-                   this.$emit('changeCurrent');
-               }
-            }).catch(res=>{
-                  return this.$error(`请求失败！${res.$message}`);
-            }).finally(e=>{
-                this.isVisible = false;
-                this.loading.close();
-            })
+            const obj = this.getInput(this.form);
+            if(!obj.value){
+              this.$error(`${obj.tips}`);
+            }else{
+              this.post(url,this.form).then(res => {
+                this.$success(`${text}成功`);
+                if(bol){
+                    this.$emit('changeCurrent');
+                }
+              }).catch(res=>{
+                    this.$error(`请求失败！${res.$message}`);
+              }).finally(e=>{
+                  this.isVisible = false;
+              })
+            }
+            this.loading.close();
         },
-        handleUrl(url,name,fileName){
+        handleUrl(url,name){
             this.form[name] = url;
         },
         addActivity(){

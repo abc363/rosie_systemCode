@@ -21,7 +21,8 @@
           <el-button type="danger" @click="addNews" icon="el-icon-plus">添加新闻</el-button>
         </div>
     </div>
-      <Table :tableData="tableData" :totalNum="totalNum" @toEidtDialog="toEidtDialog"></Table>
+      <Table :tableData="tableData" :totalNum="totalNum" 
+      @toEidtDialog="toEidtDialog" @showPro="showPro"></Table>
       <NewsCard :dialogFormVisible="dialogFormVisible" @showNews="showNews" :newsName="newsName" :isUpload="isUpload" :isAdd="isAdd"
       :newsForm="newsForm" :isCold="isCold"></NewsCard>
     </div>
@@ -69,20 +70,21 @@ export default {
         this.isAdd = false;
         this.newsForm = obj;
       },
+      showPro(data){
+        this.defaultTable = data;
+        this.showNews();
+      },
       showNews(){
-        this.get("/news/show",this.defaultTable).then((res)=>{
-          this.tableData = [];
+        this.get("/news/showByCold",this.defaultTable).then((res)=>{
+          this.tableData = res.tableData;
           this.tagList = [];
           // 是冷启才展示
           res.tableData.forEach(e=>{
-            if(e.news_isCold==1){
-              this.tableData.push(e);
-            }
             if(this.tagList.indexOf(e.news_tag)===-1){
               this.tagList.push(e.news_tag);
             }
           })
-          this.totalNum = this.tableData.length;
+          this.totalNum = res.totalNum;
         }).catch(e=>{
           this.$error(`展示出错，${e}`);
         }).finally(e=>{

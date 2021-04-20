@@ -67,6 +67,8 @@
 import Vue from 'vue';
 import UploadFile from './uploadFile';
 import VueQuillEditor from 'vue-quill-editor';
+import {mixins} from '../mixins.js';
+
 Vue.use(VueQuillEditor);
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
@@ -122,6 +124,7 @@ export default {
           default:false,
         }
     },
+     mixins:[mixins],
     data(){
         return{
             formLabelWidth:'100',
@@ -147,6 +150,48 @@ export default {
             },
         }
     },
+    methods:{
+       insertQuillImage(path){
+          let quill = this.$refs.myQuillEditor.quill
+            // 获取光标所在位置
+            let length = quill.getSelection().index
+            // 插入图片  dt.url为服务器返回的图片地址
+            quill.insertEmbed(length, 'image', path)
+            // 调整光标到最后
+            quill.setSelection(length + 1)
+        },
+        onSure(bol,nid){
+           this.loading = this.$loading({
+                lock: true,
+                text: '拼命加载中...',//可以自定义文字
+                spinner:'el-icon-loading',//自定义加载图标类名
+                background: 'rgba(0, 0, 0, 0.7)'//遮罩层背景色
+            });
+            const url = bol ? `/news/add` : `/news/${nid}/change_info`;
+            const text = bol ? '添加' : '修改';
+            const { news_date } = this.form;
+            this.form.news_date = news_date.substring(0,10);
+            this.isCold && (this.form.news_isCold = 1);
+            const obj = this.getInput(this.form);
+            if(!obj.value){
+              this.$error(`${obj.tips}`);
+            }else{
+               this.post(url,this.form).then(res => {
+               this.$success(`${text}成功`);
+               this.$emit('showNews');
+            }).catch(res=>{
+                this.$error(`请求失败！${res.$message}`);
+            }).finally(e=>{
+                this.isVisible = false;
+            })
+            }
+            this.loading.close();
+        },
+        handleUrl(url,name,fileName){
+            this.form[name] = url;
+        },
+       
+    },
     computed:{
         titleName(){
             return this.newsName === ''? '添加新闻':`${this.newsName}新闻修改信息`;
@@ -168,47 +213,7 @@ export default {
     mounted(){
         this.form = this.newsForm;
     },
-    methods:{
-        onSure(bol,nid){
-           this.loading = this.$loading({
-                lock: true,
-                text: '拼命加载中...',//可以自定义文字
-                spinner:'el-icon-loading',//自定义加载图标类名
-                background: 'rgba(0, 0, 0, 0.7)'//遮罩层背景色
-            });
-            const url = bol ? `/news/add` : `/news/${nid}/change_info`;
-            const text = bol ? '添加' : '修改';
-            const { news_date } = this.form;
-            this.form.news_date = news_date.substring(0,10);
-            this.isCold && (this.form.news_isCold = 1);
-            this.post(url,this.form).then(res => {
-               this.$success(`${text}成功`);
-               this.$emit('showNews');
-            }).catch(res=>{
-                  return this.$error(`请求失败！${res.$message}`);
-            }).finally(e=>{
-                this.isVisible = false;
-                this.loading.close();
-            })
-        },
-        handleUrl(url,name,fileName){
-            this.form[name] = url;
-        },
-        insertQuillImage(path){
-              console.log(this.$refs);
-              console.log(this.$refs.myQuillEditor);
-              let quill = this.$refs.myQuillEditor.quill
-              // // 如果上传成功
-                // 获取光标所在位置
-                let length = quill.getSelection().index
-                // 插入图片  dt.url为服务器返回的图片地址
-                quill.insertEmbed(length, 'image', path)
-                // 调整光标到最后
-                quill.setSelection(length + 1)
-              // loading加载隐藏
-              // this.quillUpdateImg = false
-        }
-    }
+    
 }
 </script>
 <style lang="less">

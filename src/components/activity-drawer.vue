@@ -270,7 +270,9 @@ export default {
                 this.tableData = res;
                 res.forEach(e=>{
                   if(e.news_award){
+                    // 评奖数组中包含该奖项的下标
                       const index = this.awardsArry.indexOf(e.news_award);
+                      // 对应的奖项评奖量+1
                       this.awardsCountArry[index]+=1;
                   }
                 })

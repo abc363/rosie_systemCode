@@ -33,7 +33,7 @@
      <el-table-column
       prop="createdTime"
       label="新建日期"
-      width="220">
+      width="250">
     </el-table-column>
      <el-table-column
       prop="edit"
@@ -68,7 +68,7 @@ export default {
     },
     totalNum:{
       type:Number,
-      default:0,
+      default:3,
     }
   },
   watch:{
@@ -88,6 +88,7 @@ export default {
         },
     }
   },
+
   methods:{
     handleDelete(obj){
       this.$alert(`是否要删除这个账号${obj.uaid}`, '提示', {

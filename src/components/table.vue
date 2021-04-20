@@ -14,22 +14,22 @@
     <el-table-column
       prop="news_title"
       label="新闻标题"
-      width="180">
+      width="250">
     </el-table-column>
     <el-table-column
       prop="news_date"
       label="新闻日期"
-      width="220">
+      width="150">
     </el-table-column>
     <el-table-column
       prop="news_tag"
       label="新闻标签"
-      width="220">
+      width="140">
     </el-table-column>
     <el-table-column
       prop="news_intro"
       label="新闻介绍"
-      width="220">
+      width="140">
       <template slot-scope="scope">
         <el-popover trigger="hover" placement="top">
           <div style="max-width:300px;">
@@ -44,7 +44,7 @@
      <el-table-column
       prop="news_image"
       label="新闻正图"
-      width="220">
+      width="140">
       <template slot-scope="scope">
         <el-popover trigger="hover" placement="top">
           <div style="max-width:300px;">
@@ -57,7 +57,7 @@
     </el-table-column>
     <el-table-column
       label="新闻状态"
-      width="220">
+      width="160">
       <template slot-scope="scope">
         <el-tag type="success" v-if="scope.row.news_isPass == 1">已通过</el-tag>
         <el-tag v-else-if="scope.row.news_isPass == 0">未审核</el-tag>
@@ -112,9 +112,14 @@ export default {
         },
     }
   },
+  watch:{
+      currentPage(newVal){
+        this.defaultTable.startPage = this.defaultTable.pageSize*(newVal-1);
+        this.$emit('showPro',this.defaultTable);
+      }
+    },
   methods:{
     handleEdit(obj){
-      console.log("((((")
       this.$emit('toEidtDialog',obj);
     },
     handleDelete(obj){

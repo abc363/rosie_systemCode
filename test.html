@@ -9,15 +9,24 @@
 <body>
   <button>btn</button>
 <script>
-    var btn = document.getElementsByTagName('button')[0];
-    // console.log(document.getElementsByTagName('div'))
-    // var btn = document.querySelector('div')
-    btn.addEventListener('click', function(e) {
-        // e = e || window.event;
-        console.log('hhh')
-        // // console.log(e.target.nodeName)
-        // e.target.style.fontSize = 20 + 'px';
-    },false)
+  var obj = [{id:1,value:3},{id:2,value:5},{id:3,value:1},{id:4,value:4},{id:5,value:5}]
+
+  function quick(obj){
+    for (i = 0; i < obj.length - 1; i++) {    //排序趟数 注意是小于
+      for (j = 0; j < obj.length - i - 1; j++) {
+        if (obj[j].value > obj[j + 1].value) {
+          var temp = obj[j].value;
+          var id = obj[j].id;
+          obj[j].value = obj[j + 1].value;
+          obj[j].id = obj[j + 1].id;
+          obj[j + 1].value = temp;
+          obj[j + 1].id = id;
+        }
+      }
+    }
+    console.log(obj)
+  }
+  quick(obj)
 </script>
 </body>
 </html>

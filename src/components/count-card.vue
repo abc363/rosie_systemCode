@@ -36,11 +36,13 @@
 <script>
 import Vue from 'vue';
 import UploadFile from './uploadFile';
+import {mixins} from '../mixins.js';
 
 export default {
     components: {
       UploadFile,
     },
+     mixins:[mixins],
     props:{
         dialogFormVisible:{
             type:Boolean,
@@ -93,17 +95,22 @@ export default {
           if(this.form.password === this.confirmPasswrod){
             const sha256 = require("js-sha256").sha256;
             this.form.password = sha256(this.form.password);
-            this.post('/userApplication/reg',this.form).then(res => {
+            const obj = this.getInput(this.form);
+            if(!obj.value){
+              this.$error(`${obj.tips}`);
+            }else{
+               this.post('/userApplication/reg',this.form).then(res => {
                this.$success(`添加冷启账号成功`);
                if(bol){
                    this.$emit('changeCurrent');
                }
             }).catch(res=>{
-                return this.$error(`添加失败！${res.$message}`);
+                this.$error(`添加失败！${res.$message}`);
             }).finally(e=>{
                 this.isVisible = false;
                 this.$emit('showUser');
             })
+            }
           }else{
             this.$error('你两次输入的密码不一致，请重新尝试！');
           }

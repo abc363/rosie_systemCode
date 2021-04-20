@@ -75,11 +75,8 @@ export default {
         const sha256 = require("js-sha256").sha256;
         this.loginForm.password = sha256(this.loginForm.password);
         this.post('/users/login',this.loginForm).then(res=>{
-          this.$success("登录成功！");
-          // 将token存放在会话存储机制中（在当前网站打开期间生效）
-          // window.sessionStorage.setItem("token",res.data.token);
+          this.$success("登录成功！");          
           window.sessionStorage.setItem("username",res.data.username);
-          // loading.close();
           this.$router.push("/index");
         }).catch(e=>{
           this.$error("登录失败！请重新尝试");

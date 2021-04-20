@@ -77,7 +77,6 @@ export default {
         }).catch(e=>{
           this.$error("注册失败！请重新尝试");
         })
-        
       })
     },
     toLogin(){

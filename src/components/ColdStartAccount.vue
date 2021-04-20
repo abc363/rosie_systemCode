@@ -40,7 +40,7 @@ export default {
         },
         tableData:[],
         dialogFormVisible:false,
-        totalNum:0,
+        totalNum:4,
         loading:true,
         isShowCard:false,
         defaultTable:{
@@ -56,7 +56,6 @@ export default {
       showUser(){
         this.get("/userApplication/showUser",this.defaultTable).then((res)=>{
           this.tableData = res;
-          this.totalNum = res.totalNum;
         }).catch(e=>{
           this.$error(`展示出错，${e}`);
         }).finally(e=>{
