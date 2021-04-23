@@ -3,23 +3,23 @@
   <div class="diversion-wrap">
     <div class="top">
       <el-card class="welcome-wrap">
-        <h2>欢迎来到VKnow新闻管理系统！</h2>
+        <h2>{{name}}，欢迎来到VKnow新闻管理系统！</h2>
         <div class="welcome-bottom-wrap">
           <div class="welcome-content">
-            <h2>{{newsNum}}</h2>
-            <p>新闻数</p>
+            <p>{{newsNum}}</p>
+            <h4>新闻数</h4>
           </div>
           <div class="welcome-content">
-            <h2>{{userNum}}</h2>
-            <p>用户数</p>
+            <p>{{userNum}}</p>
+            <h4>用户数</h4>
           </div>
           <div class="welcome-content">
-            <h2>{{activityCount}}</h2>
-            <p>活动数</p>
+            <p>{{activityCount}}</p>
+            <h4>活动数</h4>
           </div>
           <div class="welcome-content">
-            <h2>{{tagList.length}}</h2>
-            <p>标签数</p>
+            <p>{{tagList.length}}</p>
+            <h4>标签数</h4>
           </div>
         </div>
       </el-card>
@@ -36,10 +36,13 @@
  
 <script>
   import echarts from 'echarts'
+import obj from '../main.js';
+
   export default {
     data() {
       return {
         // 饼状图
+        name:'',
         data1:{
           stillShowZeroSum: true,
           tooltip: {
@@ -59,6 +62,7 @@
             type: 'pie',             //echarts图的类型   pie代表饼图
             radius: ['43%', '70%'],//饼图中饼状部分的大小所占整个父元素的百分比
             center: ['50%', '50%'],  //整个饼图在整个父元素中的位置
+            roseType:'radius',  
             data: [                  //每个模块的名字和值
             ],
             itemStyle: {
@@ -136,6 +140,49 @@
           data: []
         } ]
       },
+      data3:{
+        tooltip : {
+          trigger: 'axis',
+          axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+          }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis:  {
+            type: 'value'
+        },
+        yAxis: {
+            type: 'category',
+            data: []
+        },
+        series: [
+            {
+                name: '占比',
+                type: 'bar',
+                stack: '总量',
+                barWidth: 30,
+                itemStyle:{
+                    normal: {
+                        color: '#2860fc',
+                        barBorderRadius: [0, 3, 3, 0],
+                    }
+                },
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                z:  10,
+                data: [17,18,24,27,32]
+            } 
+        ]
+      },
         tagList:[],
         tagView:[],
         userActivity:[],
@@ -149,10 +196,11 @@
         activityData:[],
         newsNum:0,
         activityCount:0,
-        userNum:0,
+        userNum:5,
       }
     },
     mounted() {
+      this.name = obj.username;
     //  展示全部新闻数据
       this.get('/news/showAllNews').then(res => {
         this.tagList = [];
@@ -168,7 +216,6 @@
           }else{
             this.tagView[this.tagList.indexOf(e.news_tag)]+=e.news_view;
           }
-          // sum += e.news_view;
           // 数组中没有该活动
           if(e.news_activity && this.activity.indexOf(parseInt(e.news_activity))===-1){
             this.activity.push(parseInt(e.news_activity))
@@ -180,6 +227,7 @@
         this.tagView.forEach((e,index)=>{
           this.obj.push({name:this.tagList[index],value:e})
         })
+        obj.tagList = this.tagList;
         // 展示活动数据
         this.get("/activity/show",this.defaultTable).then((ele)=>{
           this.activityData = ele.tableData;
@@ -190,7 +238,6 @@
               activityName.push(e.activity_name);
             }
           })
-          // console.log(activityName)
           this.data2.xAxis[0].data = activityName;
           this.data2.series[0].data = this.activityNum;
           let myChart2 = echarts.init(document.getElementById('chart2'));
@@ -199,23 +246,56 @@
         }).catch(e=>{
           this.$error(`展示出错`);
         })
+        console.log(this.tagList);
+        console.log(this.tagView);
         this.data1.series.data = this.obj;
         this.data1.legend.data = this.tagList;
+        // console.log(this.obj);
+        // console.log(this.tagList);
         let myChart1 = echarts.init(document.getElementById('chart1'));
          let myChart3 = echarts.init(document.getElementById('chart3'));
         myChart1.setOption(this.data1);
         window.addEventListener('resize',function() {myChart1.resize()});
-        // myChart3.setOption(this.data3);
-        // window.addEventListener('resize',function() {myChart3.resize()});
+        myChart3.setOption(this.data3);
+        window.addEventListener('resize',function() {myChart3.resize()});
       })
        this.get("/UsersActivity/show").then((res)=>{
-            console.log(res)
+            let newsActivity = [];
+            res.forEach(e=>{
+              if(newsActivity.indexOf(e.news_id)==-1){
+                newsActivity.push({id:e.news_id,value:e.tag_comment*4+e.tag_praise*2+e.tag_share*3+e.tag_view});
+              }
+            })
+            let activityResult = this.quickSort(newsActivity);
+            let length = activityResult.length;
+            this.data3.yAxis.data = [`新闻${activityResult[length-5].id}`,`新闻${activityResult[length-4].id}`,
+            `新闻${activityResult[length-3].id}`,`新闻${activityResult[length-2].id}`,`新闻${activityResult[length-1].id}`];
+            this.data3.series[0].data = [activityResult[length-5].value,activityResult[length-4].value,
+            activityResult[length-3].value,
+            activityResult[length-2].value,activityResult[length-1].value]
         }).catch(e=>{
           this.$error(`展示出错，${e}`);
         }).finally(e=>{
           this.loading = false;
         });
     },
+    methods:{
+      quickSort(obj){
+      for (let i = 0; i < obj.length - 1; i++) {    //排序趟数 注意是小于
+        for (let j = 0; j < obj.length - i - 1; j++) {
+          if (obj[j].value > obj[j + 1].value) {
+            var temp = obj[j].value;
+            var id = obj[j].id;
+            obj[j].value = obj[j + 1].value;
+            obj[j].id = obj[j + 1].id;
+            obj[j + 1].value = temp;
+            obj[j + 1].id = id;
+          }
+        }
+      }
+      return obj
+  },
+    }
   }
 </script>
 <style lang="less">
@@ -227,7 +307,7 @@
     .top{
       width: 100%;
       margin: 30px 0;
-      height: 200px;
+      height: 220px;
       display: flex;
       .welcome-wrap{
         width: 100%;
@@ -243,8 +323,11 @@
           .welcome-content{
             width: 25%;
             text-align: center;
-            h2{
+            p{
               color:#409EFF;
+              text-align: center;
+              font-size: 42px;
+              font-weight: 600;
             }
           }
         }
@@ -253,7 +336,7 @@
     .bottom{
       width: 100%;
       margin: 30px 0;
-      height: 300px;
+      height: 350px;
       display: flex;
       .bottom-left-wrap{
         width: 32%;

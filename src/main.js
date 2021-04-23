@@ -37,6 +37,11 @@ Vue.config.productionTip = false
 
 Vue.use(ElementUI);
 /* eslint-disable no-new */
+export default{
+  uaid:0,
+  username:'',
+  tagList:[],
+}
 new Vue({
   el: '#app',
   router,

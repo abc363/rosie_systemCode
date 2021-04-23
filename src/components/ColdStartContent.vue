@@ -30,6 +30,7 @@
 <script>
 import Table from './table';
 import NewsCard from './news-card';
+import obj from '../main.js';
 
 export default {
     components:{
@@ -63,6 +64,7 @@ export default {
     },
     mounted(){
       this.showNews();
+      this.tagList = obj.tagList;
     },
     methods:{
       toEidtDialog(obj){
@@ -77,13 +79,13 @@ export default {
       showNews(){
         this.get("/news/showByCold",this.defaultTable).then((res)=>{
           this.tableData = res.tableData;
-          this.tagList = [];
-          // 是冷启才展示
-          res.tableData.forEach(e=>{
-            if(this.tagList.indexOf(e.news_tag)===-1){
-              this.tagList.push(e.news_tag);
-            }
-          })
+          // this.tagList = [];
+          // // 是冷启才展示
+          // res.tableData.forEach(e=>{
+          //   if(this.tagList.indexOf(e.news_tag)===-1){
+          //     this.tagList.push(e.news_tag);
+          //   }
+          // })
           this.totalNum = res.totalNum;
         }).catch(e=>{
           this.$error(`展示出错，${e}`);

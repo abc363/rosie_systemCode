@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import obj from '../main.js';
 export default {
   data(){
     return{
@@ -75,7 +76,9 @@ export default {
         const sha256 = require("js-sha256").sha256;
         this.loginForm.password = sha256(this.loginForm.password);
         this.post('/users/login',this.loginForm).then(res=>{
-          this.$success("登录成功！");          
+          this.$success("登录成功！"); 
+          obj.uaid = res.data.uid;        
+          obj.username = res.data.username; 
           window.sessionStorage.setItem("username",res.data.username);
           this.$router.push("/index");
         }).catch(e=>{

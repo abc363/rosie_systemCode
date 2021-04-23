@@ -92,6 +92,8 @@ const toolbarOptions = [
       ['link', 'image', 'video'],
       ['clean']                                         // remove formatting button
     ]
+import obj from '../main.js';
+
 export default {
     components: {
       UploadFile,
@@ -171,6 +173,9 @@ export default {
             const text = bol ? '添加' : '修改';
             const { news_date } = this.form;
             this.form.news_date = news_date.substring(0,10);
+            this.form.uaid = obj.uaid;
+            this.form.username = obj.username;
+            console.log(this.form)
             this.isCold && (this.form.news_isCold = 1);
             const obj = this.getInput(this.form);
             if(!obj.value){
@@ -212,6 +217,8 @@ export default {
     },
     mounted(){
         this.form = this.newsForm;
+      console.log("@@@",obj)
+
     },
     
 }

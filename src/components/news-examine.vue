@@ -125,6 +125,7 @@
     </div>
 </template>
 <script>
+import obj from '../main.js';
 
 export default {
     data() {
@@ -184,6 +185,7 @@ export default {
     },
     mounted(){
         this.showNews();
+        this.typeList = obj.tagList;
     },
     methods:{
         onReset(){
@@ -218,10 +220,10 @@ export default {
             this.get("/news/show",this.defaultTable).then((res)=>{
                 this.tableData = res.tableData;
                 this.totalNum = res.totalNum;
-                this.typeList = [];
-                this.tableData.forEach(item=>{
-                  !this.typeList.includes(item.news_tag) && this.typeList.push(item.news_tag);
-                })
+                // this.typeList = [];
+                // this.tableData.forEach(item=>{
+                //   !this.typeList.includes(item.news_tag) && this.typeList.push(item.news_tag);
+                // })
             }).catch(e=>{
               this.$error(`展示出错，${e}`);
             }).finally(e=>{
