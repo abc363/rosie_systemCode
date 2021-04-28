@@ -68,7 +68,10 @@ export default {
     },
     methods:{
       toEidtDialog(obj){
-        this.dialogFormVisible = true;
+        this.dialogFormVisible = false;
+        this.$nextTick(()=>{
+          this.dialogFormVisible = true;
+        })
         this.isAdd = false;
         this.newsForm = obj;
       },
@@ -95,11 +98,13 @@ export default {
       },
       onSearch(){
         this.post('/news/search',this.searchForm).then(res=>{
-          res.tableData.forEach(e=>{
+          this.tableData = [];
+          res.data.tableData.forEach(e=>{
             if(e.news_isCold==1){
               this.tableData.push(e);
             }
           })
+          console.log(this.tableData)
           this.totalNum = this.tableData.length;
         })
       },

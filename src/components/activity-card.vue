@@ -133,38 +133,46 @@ export default {
             newVal === false && (this.form = {});
             this.$emit('changeVisiable',newVal);
         },
-        newsForm(newVal){
-            this.form = newVal;
+        newsForm:{
+          immediate:true,
+          handler:function(newVal){
+             this.form = newVal;
+             console.log(this.form)
             this.num = newVal.aid;
-        }
+            this.awards = newVal.awards;
+          }
+        },
+        // newsForm(newVal){
+        //     this.form = newVal;
+        //     this.num = newVal.aid;
+        //     this.awards = newVal.awards;
+        // }
     },
-    mounted(){
-        this.form = this.newsForm;
-    },
+    // mounted(){
+    //     this.form = this .newsForm;
+    // },
     methods:{
         onSure(bol,nid){
+          const url = bol ? `/activity/add` : `/activity/${nid}/change_info`;
+            const text = bol ? '添加' : '修改';
+            this.form.awards = JSON.stringify(this.awards);
+            this.form.startTime = this.activityTime[0];
+            this.form.endTime = this.activityTime[1];
+            const obj = this.getInput(this.form);
+           if(!obj.value){
+              this.$error(`${obj.tips}`);
+            }else{
            this.loading = this.$loading({
                 lock: true,
                 text: '拼命加载中...',//可以自定义文字
                 spinner:'el-icon-loading',//自定义加载图标类名
                 background: 'rgba(0, 0, 0, 0.7)'//遮罩层背景色
             });
-            const url = bol ? `/activity/add` : `/activity/${nid}/change_info`;
-            const text = bol ? '添加' : '修改';
-            this.form.awards = JSON.stringify(this.awards);
-            this.form.startTime = this.activityTime[0];
-            this.form.endTime = this.activityTime[1];
-            const obj = this.getInput(this.form);
-            if(!obj.value){
-              this.$error(`${obj.tips}`);
-            }else{
               this.post(url,this.form).then(res => {
                 this.$success(`${text}成功`);
                 if(bol){
                     this.$emit('changeCurrent');
                 }
-              }).catch(res=>{
-                    this.$error(`请求失败！${res.$message}`);
               }).finally(e=>{
                   this.isVisible = false;
               })

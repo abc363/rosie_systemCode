@@ -127,6 +127,7 @@ export default {
           confirmButtonText: '确定',
           callback: action => {
             this.get(`/news/${obj.nid}/delete`).then((res)=>{
+            this.$emit('showPro',this.defaultTable);
               this.$success('删除成功！');
             }).catch(e=>{
               this.$error(`删除出错，${e}`);

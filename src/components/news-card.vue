@@ -40,7 +40,7 @@
                   <el-col :span="23">
                     <el-form-item label="正图" label-width="40px">
                         <UploadFile :imageUrl="form.news_image" @handleUrl="handleUrl"
-                         field="news_image" :pid="num" :visiable="isVisible"></UploadFile>
+                         field="news_image" :pid="newsNum" :visiable="isVisible"></UploadFile>
                     </el-form-item>
                 </el-col>
                  <el-col :span="23">
@@ -58,7 +58,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="isVisible = false">取 消</el-button>
-            <el-button type="primary" @click="onSure(isAdd,num)">确 定</el-button>
+            <el-button type="primary" @click="onSure(isAdd,newsNum)">确 定</el-button>
         </div>
         </el-dialog>
     </div>
@@ -68,7 +68,7 @@ import Vue from 'vue';
 import UploadFile from './uploadFile';
 import VueQuillEditor from 'vue-quill-editor';
 import {mixins} from '../mixins.js';
-
+import newsObj from '../main.js';
 Vue.use(VueQuillEditor);
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
@@ -92,7 +92,7 @@ const toolbarOptions = [
       ['link', 'image', 'video'],
       ['clean']                                         // remove formatting button
     ]
-import obj from '../main.js';
+
 
 export default {
     components: {
@@ -131,7 +131,11 @@ export default {
         return{
             formLabelWidth:'100',
             isVisible:false,
-            form:{},
+            newsNum:0,
+            form:{
+              uaid:0,
+              username:'',
+            },
             editorOption: {
                 placeholder: '请输入新闻内容.....',
                 modules: {
@@ -173,8 +177,8 @@ export default {
             const text = bol ? '添加' : '修改';
             const { news_date } = this.form;
             this.form.news_date = news_date.substring(0,10);
-            this.form.uaid = obj.uaid;
-            this.form.username = obj.username;
+            this.form.uaid = newsObj.uaid;
+            this.form.username = newsObj.username;
             console.log(this.form)
             this.isCold && (this.form.news_isCold = 1);
             const obj = this.getInput(this.form);
@@ -212,12 +216,12 @@ export default {
         },
         newsForm(newVal){
             this.form = newVal;
-            this.num = newVal.nid;
+            this.newsNum = newVal.nid;
         }
     },
     mounted(){
+        this.newsNum = this.num;
         this.form = this.newsForm;
-      console.log("@@@",obj)
 
     },
     

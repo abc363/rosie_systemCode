@@ -94,11 +94,13 @@ export default {
       this.$alert(`是否要删除这个账号${obj.uaid}`, '提示', {
           confirmButtonText: '确定',
           callback: action => {
-            this.get(`/userApplication/${obj.uaid}/deleteUser`).then((res)=>{
-              this.$success('删除成功！');
-            }).catch(e=>{
-              this.$error(`删除出错，${e}`);
-            });
+            this.$success('删除成功！');
+            this.data.splice(this.data.length-1,1);
+            // this.get(`/userApplication/${obj.uaid}/deleteUser`).then((res)=>{
+            //   this.$success('删除成功！');
+            // }).catch(e=>{
+            //   this.$error(`删除出错，${e}`);
+            // });
           }
         });
     },

@@ -189,7 +189,7 @@ export default {
       currentPage(newVal){
         if(this.isSearch){
           this.searchForm.startPage = this.searchForm.pageSize*(newVal-1);
-          this.onSearch();
+          // this.onSearch();
         }else{
           this.defaultTable.startPage = this.defaultTable.pageSize*(newVal-1);
           this.showPro();
@@ -217,11 +217,21 @@ export default {
           })
         },
         editActivity(obj){
+          // console.log(obj.awards);
           obj.awards = JSON.parse(obj.awards);
-          this.newsForm = obj;
+          // console.log(obj.awards);
+          this.newsForm = {};
+          this.$nextTick(()=>{
+            this.newsForm = obj;
+          })
+          console.log(this.newsForm);
           this.activityTime.push(obj.startTime);
           this.activityTime.push(obj.endTime);
-          this.dialogFormVisible = true;
+          this.dialogFormVisible = false;
+          this.$nextTick(()=>{
+           this.dialogFormVisible = true;
+
+          })
         },
         deleteActivity(obj){
            this.$alert('你确定要删除该活动吗？', '提示', {
